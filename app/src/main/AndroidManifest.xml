@@ -24,7 +24,6 @@
         <activity android:name=".timesEditActivity"
             android:label="@string/eidit_times"
             android:parentActivityName=".settingsActivity"/>
-        <activity android:name="AndroidDatabaseManager" />
 
     </application>
 

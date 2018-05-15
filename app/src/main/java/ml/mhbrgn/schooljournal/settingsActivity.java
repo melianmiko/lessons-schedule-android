@@ -46,8 +46,7 @@ public class settingsActivity extends AppCompatActivity {
         menu.add(new ListItem(R.string.appearance, R.string.appearanceDesc, R.drawable.baseline_palette_black_24, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(settingsActivity.this, AndroidDatabaseManager.class);
-                settingsActivity.this.startActivity(myIntent);
+
             }
         }));
 
