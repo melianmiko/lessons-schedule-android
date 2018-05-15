@@ -34,4 +34,8 @@
     <string name="ok">Ok</string>
     <string name="times_wipe_msg">All your times will be removed and replaced with default table.</string>
     <string name="times_wipe_title">Restore default times?</string>
+    <string name="edit_names">Edit names</string>
+    <string name="name_add">Create new lesson name:</string>
+    <string name="input_lesson_name">Lesson name</string>
+    <string name="name_mod">Modify name</string>
 </resources>

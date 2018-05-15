@@ -2,11 +2,8 @@ package ml.mhbrgn.schooljournal;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.MatrixCursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +13,11 @@ public class LessonsStorage extends SQLiteOpenHelper  {
     class TimeRecord{
         int startTime; int endTime;
         TimeRecord(int s, int e) {startTime = s; endTime = e;}
+    }
+
+    class NameRecord{
+        int id; String name;
+        NameRecord(int id, String name) {this.id = id; this.name = name;}
     }
 
     private static final int version = 1;
@@ -28,9 +30,9 @@ public class LessonsStorage extends SQLiteOpenHelper  {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE lessons(id INTEGER PRIMARY KEY, name TEXT)");
+        db.execSQL("CREATE TABLE lessons(id INTEGER, name TEXT)");
         db.execSQL("CREATE TABLE times(id INTEGER, startTime INTEGER, endTime INTEGER)");
-        db.execSQL("CREATE TABLE lessonsTable(day INTEGER PRIMARY KEY, jsonArray TEXT)");
+        db.execSQL("CREATE TABLE lessonsTable(day INTEGER, jsonArray TEXT)");
         db.execSQL("CREATE TABLE preferences(name TINYTEXT, value TINYTEXT)");
 
         // Create days in lessonsTable
@@ -41,6 +43,10 @@ public class LessonsStorage extends SQLiteOpenHelper  {
 
         // Setup times
         this.setupDefTimes(db);
+
+        db.execSQL("INSERT INTO lessons VALUES (1,\"Algebra\")");
+        db.execSQL("INSERT INTO lessons VALUES (2,\"Algebra2\")");
+        db.execSQL("INSERT INTO lessons VALUES (3,\"Algebra3\")");
     }
 
     @Override
@@ -129,4 +135,50 @@ public class LessonsStorage extends SQLiteOpenHelper  {
         // Rebase complete!
     }
 
+    // ============================================================================================
+    // Names manage
+
+    public NameRecord[] getNames() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        List<NameRecord> read = new ArrayList<>();
+        // Get all records
+        Cursor cursor = db.rawQuery("SELECT * FROM lessons", null);
+        if (cursor.moveToFirst()) {
+            read.add(new NameRecord(cursor.getInt(cursor.getColumnIndex("id")),
+                    cursor.getString(cursor.getColumnIndex("name"))));
+
+            while (cursor.moveToNext()) {
+
+                read.add(new NameRecord(cursor.getInt(cursor.getColumnIndex("id")),
+                        cursor.getString(cursor.getColumnIndex("name"))));
+
+            }
+
+        }
+        cursor.close();
+        return read.toArray(new NameRecord[read.size()]);
+    }
+
+    public String getName(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM lessons WHERE id="+id, null);
+        if(cursor.moveToFirst()) {
+            String n = cursor.getString(cursor.getColumnIndex("name"));
+            cursor.close();
+            return n;
+        } else {
+            cursor.close();
+            return null;
+        }
+    }
+
+    public void nameAdd(String name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("INSERT INTO lessons(id,name) VALUES ("+(this.getNames().length+1)+",\""+name+"\")");
+    }
+
+    public void nameMod(int id, String name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("UPDATE lessons SET name=\""+name+"\" WHERE id="+id);
+    }
 }

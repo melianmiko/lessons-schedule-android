@@ -40,7 +40,7 @@ public class settingsActivity extends AppCompatActivity {
         menu.add(new ListItem(R.string.editNames, R.string.editNamesDesc, R.drawable.baseline_list_black_24, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                settingsActivity.this.startActivity(new Intent(settingsActivity.this, namesEditActivity.class));
             }
         }));
 
