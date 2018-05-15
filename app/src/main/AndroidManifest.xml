@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="ml.mhbrgn.schooljournal">
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".settingsActivity"
+            android:label="@string/settingsTitle"
+            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".timesEditActivity"
+            android:label="@string/eidit_times"
+            android:parentActivityName=".settingsActivity"/>
+        <activity android:name="AndroidDatabaseManager" />
+
+    </application>
+
+</manifest>
