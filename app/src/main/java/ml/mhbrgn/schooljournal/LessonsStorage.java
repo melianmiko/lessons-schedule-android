@@ -50,6 +50,10 @@ public class LessonsStorage extends SQLiteOpenHelper  {
 
     // ===================================================================
     // Times manage
+    public void timesRestore() {
+        this.setupDefTimes(this.getWritableDatabase());
+    }
+
     private void setupDefTimes(SQLiteDatabase db) {
         db.execSQL("DELETE FROM times");
 

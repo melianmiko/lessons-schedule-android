@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -63,7 +64,7 @@ public class settingsActivity extends AppCompatActivity {
             // Convert res-ids to strings
             title = getResources().getString(t);
             description = getResources().getString(d);
-            icon = getResources().getDrawable(i);
+            icon = ContextCompat.getDrawable(settingsActivity.this, i);;
             click = c;
         }
     }

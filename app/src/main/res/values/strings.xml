@@ -31,4 +31,7 @@
     <string name="dubledot">:</string>
     <string name="incorrect_time">Incorrect time format</string>
     <string name="reset_defs">Reset defaults</string>
+    <string name="ok">Ok</string>
+    <string name="times_wipe_msg">All your times will be removed and replaced with default table.</string>
+    <string name="times_wipe_title">Restore default times?</string>
 </resources>

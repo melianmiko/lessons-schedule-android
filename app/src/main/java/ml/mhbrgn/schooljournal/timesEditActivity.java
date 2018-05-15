@@ -213,6 +213,22 @@ public class timesEditActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.times_wipe:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                builder.setTitle(R.string.times_wipe_title)
+                        .setMessage(R.string.times_wipe_msg)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ls.timesRestore();
+                                timesEditActivity.this.updateList();
+                            }
+                        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Nothing
+                            }
+                        }).create().show();
                 break;
         }
         return super.onOptionsItemSelected(item);

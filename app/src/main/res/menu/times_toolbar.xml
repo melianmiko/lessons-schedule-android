@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:icon="@drawable/baseline_calendar_today_black_24"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:icon="@drawable/baseline_restore_white_24"
         android:id="@+id/times_wipe"
-        android:title="@string/reset_defs" />
+        android:title="@string/reset_defs"
+        android:orderInCategory="100"
+        app:showAsAction="always"/>
+
 </menu>
