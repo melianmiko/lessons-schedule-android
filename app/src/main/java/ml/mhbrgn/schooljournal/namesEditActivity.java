@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class namesEditActivity extends AppCompatActivity {
     LessonsStorage ls;
@@ -62,7 +61,9 @@ public class namesEditActivity extends AppCompatActivity {
             holder.remove_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(namesEditActivity.this, ""+nameID, Toast.LENGTH_SHORT).show();
+                    LessonsStorage ls = new LessonsStorage(namesEditActivity.this);
+                    ls.nameRem(nameID);
+                    namesEditActivity.this.updateList();
                 }
             });
         }

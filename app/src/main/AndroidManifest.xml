@@ -27,6 +27,9 @@
         <activity android:name="namesEditActivity"
             android:label="@string/edit_names"
             android:parentActivityName=".settingsActivity"/>
+        <activity android:name=".tableEditActivity"
+            android:label="@string/table_edit"
+            android:parentActivityName=".settingsActivity"/>
 
     </application>
 

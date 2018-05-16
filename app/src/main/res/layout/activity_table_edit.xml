@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/white">
+
+        <ImageButton
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="64dp"
+            android:layout_height="56dp"
+            android:id="@+id/day_back"
+            android:src="@drawable/baseline_arrow_left_black_24"
+            android:contentDescription="@string/day_back" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:id="@+id/text_weekday"
+            android:textSize="16sp"
+            android:layout_marginStart="64dp"
+            android:layout_marginEnd="64dp"
+            android:layout_marginTop="18dp"
+            android:textAlignment="center"/>
+
+        <ImageButton
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="64dp"
+            android:layout_height="56dp"
+            android:id="@+id/day_next"
+            android:src="@drawable/baseline_arrow_right_black_24"
+            android:contentDescription="@string/day_back"
+            android:layout_alignParentEnd="true"/>
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/table_edit_list"/>
+
+</LinearLayout>

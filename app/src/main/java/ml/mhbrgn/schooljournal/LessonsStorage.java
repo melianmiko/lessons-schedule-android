@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +19,21 @@ public class LessonsStorage extends SQLiteOpenHelper  {
         NameRecord(int id, String name) {this.id = id; this.name = name;}
     }
 
+    class TableItem {
+        int day; int n; int lesson;
+        TableItem(int day, int n, int lsn) {this.day = day; this.n = n; this.lesson = lsn;}
+    }
+
+    class DailyTable {
+        int day; TableItem[] content;
+        DailyTable(int day, TableItem[] data) {this.day = day; this.content = data;}
+    }
+
+    class LessonsTable {
+        DailyTable[] content;
+        LessonsTable(DailyTable[] data) {content = data;}
+    }
+
     private static final int version = 1;
     private static final String clearLsnDay = "[]";
     private static final int workDays = 5;
@@ -30,13 +44,10 @@ public class LessonsStorage extends SQLiteOpenHelper  {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE lessons(id INTEGER, name TEXT)");
-        db.execSQL("CREATE TABLE times(id INTEGER, startTime INTEGER, endTime INTEGER)");
-        db.execSQL("CREATE TABLE lessonsTable(day INTEGER, jsonArray TEXT)");
+        db.execSQL("CREATE TABLE lessons(id INT, name TEXT)");
+        db.execSQL("CREATE TABLE times(id INT, startTime INT, endTime INT)");
+        db.execSQL("CREATE TABLE lessonsTable(day INT, number INT, lesson INT, auditory INT)");
         db.execSQL("CREATE TABLE preferences(name TINYTEXT, value TINYTEXT)");
-
-        // Create days in lessonsTable
-        for (int i = 0; i < 7; i++) { db.execSQL("INSERT INTO lessonsTable(day, jsonArray) VALUES ("+i+",\""+clearLsnDay+"\")"); }
 
         // Set work days pref
         db.execSQL("INSERT INTO preferences(name,value) VALUES (\"workDays\",\""+workDays+"\")");
@@ -135,6 +146,10 @@ public class LessonsStorage extends SQLiteOpenHelper  {
         // Rebase complete!
     }
 
+    private int getLessonsCount() {
+        return this.getTimes().length;
+    }
+
     // ============================================================================================
     // Names manage
 
@@ -180,5 +195,54 @@ public class LessonsStorage extends SQLiteOpenHelper  {
     public void nameMod(int id, String name) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("UPDATE lessons SET name=\""+name+"\" WHERE id="+id);
+    }
+
+    public void nameRem(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM lessons WHERE id="+id);
+    }
+
+    // ============================================================================================
+    // Table manage
+
+    public void tableSet(int day, int number, int lesson) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        if(tableIsDefined(day,number)) db.execSQL("UPDATE lessonsTable SET lesson"+lesson+" WHERE day="+day+" AND number="+number);
+        else db.execSQL("INSERT INTO lessonsTable(day,number,lesson) VALUES ("+day+","+number+","+lesson+")");
+    }
+
+    public DailyTable getDayLessons(int day) {
+        ArrayList<TableItem> records = new ArrayList<>();
+        int lessons = this.getLessonsCount();
+        for(int i = 1; i <= lessons; i++) {
+            records.add(this.getFromTable(day, i));
+        }
+        TableItem[] data = records.toArray(new TableItem[records.size()]);
+
+        return new DailyTable(day,data);
+    }
+
+    public LessonsTable getTable() {
+        ArrayList<DailyTable> out = new ArrayList<>();
+        for(int i = 0; i <= 7; i++) out.add(this.getDayLessons(i));
+        DailyTable[] data = out.toArray(new DailyTable[out.size()]);
+        return new LessonsTable(data);
+    }
+
+    private boolean tableIsDefined(int day, int n) {
+        return getFromTable(day, n) != null;
+    }
+
+    private TableItem getFromTable(int day, int n) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM lessonsTable WHERE day="+day+" AND number="+n, null);
+        if(cursor.moveToFirst()) {
+            TableItem ret = new TableItem(day,n,cursor.getInt(cursor.getColumnIndex("lesson")));
+            cursor.close();
+            return ret;
+        } else {
+            cursor.close();
+            return null;
+        }
     }
 }
