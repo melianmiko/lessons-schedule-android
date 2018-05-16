@@ -14,12 +14,12 @@ public class LessonsStorage extends SQLiteOpenHelper  {
         TimeRecord(int s, int e) {startTime = s; endTime = e;}
     }
 
-    class NameRecord{
+    static class NameRecord{
         int id; String name;
         NameRecord(int id, String name) {this.id = id; this.name = name;}
     }
 
-    class TableItem {
+    static class TableItem {
         int day; int n; int lesson;
         TableItem(int day, int n, int lsn) {this.day = day; this.n = n; this.lesson = lsn;}
     }
@@ -35,7 +35,6 @@ public class LessonsStorage extends SQLiteOpenHelper  {
     }
 
     private static final int version = 1;
-    private static final String clearLsnDay = "[]";
     private static final int workDays = 5;
 
     LessonsStorage(Context context) {
@@ -207,8 +206,13 @@ public class LessonsStorage extends SQLiteOpenHelper  {
 
     public void tableSet(int day, int number, int lesson) {
         SQLiteDatabase db = this.getWritableDatabase();
-        if(tableIsDefined(day,number)) db.execSQL("UPDATE lessonsTable SET lesson"+lesson+" WHERE day="+day+" AND number="+number);
+        if(tableIsDefined(day,number)) db.execSQL("UPDATE lessonsTable SET lesson="+lesson+" WHERE day="+day+" AND number="+number);
         else db.execSQL("INSERT INTO lessonsTable(day,number,lesson) VALUES ("+day+","+number+","+lesson+")");
+    }
+
+    public void tableRem(int day, int n) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM lessonsTable WHERE day="+day+" AND number="+n);
     }
 
     public DailyTable getDayLessons(int day) {
