@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,19 +38,19 @@ public class timesEditActivity extends AppCompatActivity {
             return new ViewHolder(v);
         }
 
-        private String timeToString(int time) {
-            String hours = String.valueOf((int) Math.floor(time/60));
-            if(hours.length() < 2) hours = "0"+hours;
-            String minutes = String.valueOf(time-((int) Math.floor(time/60))*60);
-            if(minutes.length() < 2) minutes = "0"+minutes;
-            return hours+":"+minutes;
-        }
-
         @SuppressLint("SetTextI18n")
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            String startTime = this.timeToString(mData[position].startTime);
-            String endTime = this.timeToString(mData[position].endTime);
+            String startTime = LessonsStorage.timeToString(mData[position].startTime);
+            String endTime = LessonsStorage.timeToString(mData[position].endTime);
+
+            // Add padding to last item
+            if(position == this.getItemCount()-1) {
+                RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) holder.root.getLayoutParams();
+                params.setMargins(params.leftMargin, params.topMargin, params.rightMargin, 32);
+                holder.root.setLayoutParams(params);
+            }
+
             holder.num.setText(String.valueOf(position+1));
             holder.name.setText(startTime+"-"+endTime);
             holder.removeBtn.setOnClickListener(new View.OnClickListener() {
@@ -104,6 +106,17 @@ public class timesEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 timesEditActivity.this.addTime();
+            }
+        });
+
+        // Add scroll listener to hide FAB
+        RecyclerView box = findViewById(R.id.times_list);
+        box.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            FloatingActionButton fab = findViewById(R.id.fab);
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy <= 0 && !fab.isShown()) fab.show();
+                else if(dy > 0 && fab.isShown()) fab.hide();
             }
         });
     }

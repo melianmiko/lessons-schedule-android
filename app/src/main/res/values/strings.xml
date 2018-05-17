@@ -42,4 +42,20 @@
     <string name="table_edit">Edit table</string>
     <string name="empy_list_item">Nothing</string>
     <string name="clean">Remove</string>
+
+    <string name="day_1">Monday</string>
+    <string name="day_2">Tuesday</string>
+    <string name="day_3">Wednesday</string>
+    <string name="day_4">Thursday</string>
+    <string name="day_5">Friday</string>
+    <string name="day_6">Saturday</string>
+    <string name="day_7">Sunday</string>
+
+    <string name="geometry">Geometry</string>
+    <string name="biology">Biology</string>
+    <string name="literature">Literature</string>
+    <string name="english">English</string>
+    <string name="algebra">Algebra</string>
+
 </resources>
+

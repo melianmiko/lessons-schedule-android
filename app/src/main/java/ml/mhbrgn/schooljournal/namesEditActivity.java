@@ -3,6 +3,7 @@ package ml.mhbrgn.schooljournal;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -57,6 +58,13 @@ public class namesEditActivity extends AppCompatActivity {
                     namesEditActivity.this.nameModDlalog(nameID);
                 }
             });
+
+            // Add padding to last item
+            if(position == this.getItemCount()-1) {
+                RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) holder.root.getLayoutParams();
+                params.setMargins(params.leftMargin, params.topMargin, params.rightMargin, 32);
+                holder.root.setLayoutParams(params);
+            }
 
             holder.remove_button.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -113,6 +121,17 @@ public class namesEditActivity extends AppCompatActivity {
                         }
                     }).create().show();
 
+            }
+        });
+
+        // Add scroll listener to hide FAB
+        RecyclerView box = findViewById(R.id.names_container);
+        box.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            FloatingActionButton fab = findViewById(R.id.fab);
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy <= 0 && !fab.isShown()) fab.show();
+                else if(dy > 0 && fab.isShown()) fab.hide();
             }
         });
     }

@@ -5,9 +5,57 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class LessonsStorage extends SQLiteOpenHelper  {
+    // Default data
+    private int[][] times = new int[][]{
+            new int[]{500,540}, new int[]{545,585}, new int[]{600,640}, new int[]{655,695},
+            new int[]{705,745}, new int[]{755,795}, new int[]{805,845}, new int[]{855,895}
+    };
+
+    private int[] lessons = new int[]{
+           R.string.algebra, R.string.english, R.string.literature,
+           R.string.geometry, R.string.biology
+    };
+
+    // DAY 1 = MONDAY
+    static int getCurrentDay() {
+        Calendar calendar = Calendar.getInstance();
+
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+        --day;
+
+        if ( day == 0 ) day = 7;
+        return day;
+    }
+
+    static String getDayName(int dayNumber, Context context) {
+        int[] dayStrings = new int[]{0, R.string.day_1, R.string.day_2, R.string.day_3, R.string.day_4,
+                R.string.day_5, R.string.day_6, R.string.day_7};
+
+        return context.getResources().getString(dayStrings[dayNumber]);
+    }
+
+    static String timeToString(int time) {
+        int hours = (int) Math.floor(time/60);
+        int minutes = (int) Math.floor(time-hours*60);
+
+        String h = String.valueOf(hours);
+        if(h.length() == 1) h = '0'+h;
+        String m = String.valueOf(minutes);
+        if(m.length() == 1) m = '0'+m;
+
+        return h+':'+m;
+    }
+
+    String getLessonTimeString(int lesson) {
+        TimeRecord tr = getTime(lesson);
+        return lesson+" "+timeToString(tr.startTime);
+    }
+
+    // CLASSES ==========================================================================
 
     class TimeRecord{
         int startTime; int endTime;
@@ -36,9 +84,11 @@ public class LessonsStorage extends SQLiteOpenHelper  {
 
     private static final int version = 1;
     private static final int workDays = 5;
+    private Context context;
 
     LessonsStorage(Context context) {
         super(context, "lessonsDB", null, version);
+        this.context = context;
     }
 
     @Override
@@ -54,9 +104,12 @@ public class LessonsStorage extends SQLiteOpenHelper  {
         // Setup times
         this.setupDefTimes(db);
 
-        db.execSQL("INSERT INTO lessons VALUES (1,\"Algebra\")");
-        db.execSQL("INSERT INTO lessons VALUES (2,\"Algebra2\")");
-        db.execSQL("INSERT INTO lessons VALUES (3,\"Algebra3\")");
+        // Setup lesson names
+        for (int i = 0; i < lessons.length; i++) {
+            int c = lessons[i];
+            String cur = context.getResources().getString(c);
+            db.execSQL("INSERT INTO lessons(id,name) VALUES ("+(i+1)+",\""+cur+"\")");
+        }
     }
 
     @Override
@@ -67,38 +120,36 @@ public class LessonsStorage extends SQLiteOpenHelper  {
     // ===================================================================
     // Times manage
     public void timesRestore() {
-        this.setupDefTimes(this.getWritableDatabase());
+        this.setupDefTimes(getWritableDatabase());
     }
 
     private void setupDefTimes(SQLiteDatabase db) {
         db.execSQL("DELETE FROM times");
 
-        db.execSQL("INSERT INTO times(id,startTime,endTime) VALUES (1,500,540)");
-        db.execSQL("INSERT INTO times(id,startTime,endTime) VALUES (2,545,585)");
-        db.execSQL("INSERT INTO times(id,startTime,endTime) VALUES (3,600,640)");
-        db.execSQL("INSERT INTO times(id,startTime,endTime) VALUES (4,655,695)");
-        db.execSQL("INSERT INTO times(id,startTime,endTime) VALUES (5,705,745)");
-        db.execSQL("INSERT INTO times(id,startTime,endTime) VALUES (6,755,795)");
+        for(int i = 0; i < times.length; i++) {
+            int[] values = times[i];
+            db.execSQL("INSERT INTO times(id,startTime,endTime) VALUES ("+(i+1)+","+values[0]+","+values[1]+")");
+        }
     }
 
     public void timeAdd(int startTime, int endTime) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         db.execSQL("INSERT INTO times(id,startTime,endTime) VALUES ("+(this.getTimes().length+1)+","+startTime+","+endTime+")");
     }
 
     public void timeMod(int id, int startTime, int endTime) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         db.execSQL("UPDATE times SET startTIme="+startTime+", endTime="+endTime+" WHERE id="+id);
     }
 
     public void timeRem(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM times WHERE id="+id);
         this.timeRebase();
     }
 
     public TimeRecord getTime(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         // Get all records
         Cursor cursor = db.rawQuery("SELECT * FROM times WHERE id="+id, null);
         if(cursor.moveToFirst()) {
@@ -112,7 +163,7 @@ public class LessonsStorage extends SQLiteOpenHelper  {
     }
 
     public TimeRecord[] getTimes() {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         List<TimeRecord> read = new ArrayList<>();
         // Get all records
         Cursor cursor = db.rawQuery("SELECT * FROM times", null);
@@ -134,7 +185,7 @@ public class LessonsStorage extends SQLiteOpenHelper  {
     }
 
     private void timeRebase() {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         // Get backup
         TimeRecord[] bkp = this.getTimes();
         // Drop table
@@ -153,7 +204,7 @@ public class LessonsStorage extends SQLiteOpenHelper  {
     // Names manage
 
     public NameRecord[] getNames() {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         List<NameRecord> read = new ArrayList<>();
         // Get all records
         Cursor cursor = db.rawQuery("SELECT * FROM lessons", null);
@@ -174,7 +225,7 @@ public class LessonsStorage extends SQLiteOpenHelper  {
     }
 
     public String getName(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM lessons WHERE id="+id, null);
         if(cursor.moveToFirst()) {
             String n = cursor.getString(cursor.getColumnIndex("name"));
@@ -187,17 +238,17 @@ public class LessonsStorage extends SQLiteOpenHelper  {
     }
 
     public void nameAdd(String name) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         db.execSQL("INSERT INTO lessons(id,name) VALUES ("+(this.getNames().length+1)+",\""+name+"\")");
     }
 
     public void nameMod(int id, String name) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         db.execSQL("UPDATE lessons SET name=\""+name+"\" WHERE id="+id);
     }
 
     public void nameRem(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM lessons WHERE id="+id);
     }
 
@@ -211,7 +262,7 @@ public class LessonsStorage extends SQLiteOpenHelper  {
     }
 
     public void tableRem(int day, int n) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM lessonsTable WHERE day="+day+" AND number="+n);
     }
 
@@ -238,12 +289,37 @@ public class LessonsStorage extends SQLiteOpenHelper  {
     }
 
     private TableItem getFromTable(int day, int n) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM lessonsTable WHERE day="+day+" AND number="+n, null);
         if(cursor.moveToFirst()) {
             TableItem ret = new TableItem(day,n,cursor.getInt(cursor.getColumnIndex("lesson")));
             cursor.close();
             return ret;
+        } else {
+            cursor.close();
+            return null;
+        }
+    }
+
+    // ============================================================================================
+    // Preferences
+
+    public void setPref(String key, String value) {
+        SQLiteDatabase db = getWritableDatabase();
+        if(this.getPref(key) == null) {
+            db.execSQL("INSERT INTO preferences(name,value) VALUES (\""+key+"\",\""+value+"\")");
+        } else {
+            db.execSQL("UPDATE TABLE preferences SET value=\""+value+"\" WHERE name=\""+key+"\"");
+        }
+    }
+
+    public String getPref(String key) {
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM preferences WHERE name=\""+key+"\"", null);
+        if(cursor.moveToFirst()) {
+            String value = cursor.getString(cursor.getColumnIndex("value"));
+            cursor.close();
+            return value;
         } else {
             cursor.close();
             return null;

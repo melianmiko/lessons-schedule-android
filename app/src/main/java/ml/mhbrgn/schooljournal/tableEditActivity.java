@@ -3,6 +3,7 @@ package ml.mhbrgn.schooljournal;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -50,13 +51,13 @@ public class tableEditActivity extends AppCompatActivity {
             final int d_id = position+1;
             final int d_day = day;
 
-            holder.timeBox.setText(String.valueOf(d_id));
+            holder.timeBox.setText(ls.getLessonTimeString(d_id));
 
             if(mData[position] != null)
                 holder.nameBox.setText(String.valueOf(ls.getName(mData[position].lesson)));
             else {
                 holder.nameBox.setText(R.string.empy_list_item);
-                holder.nameBox.setTextColor(getResources().getColor(R.color.grey));
+                holder.nameBox.setTextColor(ContextCompat.getColor(tableEditActivity.this,R.color.grey));
             }
 
             holder.root.setOnClickListener(new View.OnClickListener() {
@@ -148,16 +149,47 @@ public class tableEditActivity extends AppCompatActivity {
         }
     }
     // ====================================================================================
-    int current_day = 0;
+    static int current_day = LessonsStorage.getCurrentDay();
+    static int work_days = 5;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_table_edit);
 
+        findViewById(R.id.day_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                current_day--;
+                updateVars();
+                if(current_day < 1) current_day = work_days;
+                updateList();
+            }
+        });
+
+        findViewById(R.id.day_next).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                current_day++;
+                updateVars();
+                if(current_day > work_days) current_day = 1;
+                updateList();
+            }
+        });
+
+        this.updateVars();
         this.updateList();
     }
 
+    void updateVars() {
+        work_days = Integer.parseInt(ls.getPref("workDays"));
+    }
+
     void updateList() {
+        // 1 - Update day in box
+        ( (TextView) findViewById(R.id.text_weekday) ).setText(LessonsStorage.getDayName(current_day,this));
+
+        // 2 - Create table
         LessonsStorage.TableItem[] data = ls.getDayLessons(current_day).content;
         RecyclerView.Adapter adapter = new DailyTableAdapter(data, current_day);
         RecyclerView.LayoutManager lm = new LinearLayoutManager(this);
