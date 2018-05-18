@@ -17,10 +17,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class namesEditActivity extends AppCompatActivity {
-    LessonsStorage ls;
-
     class namesAdapter extends RecyclerView.Adapter<namesAdapter.ViewHolder> {
-        LessonsStorage.NameRecord[] mData;
+        LessonName[] mData;
 
         class ViewHolder extends RecyclerView.ViewHolder {
             TextView name_textbox;
@@ -34,7 +32,7 @@ public class namesEditActivity extends AppCompatActivity {
             }
         }
 
-        namesAdapter(LessonsStorage.NameRecord[] data) {
+        namesAdapter(LessonName[] data) {
             mData = data;
         }
 
@@ -69,8 +67,8 @@ public class namesEditActivity extends AppCompatActivity {
             holder.remove_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    LessonsStorage ls = new LessonsStorage(namesEditActivity.this);
-                    ls.nameRem(nameID);
+                    LessonName ln = new LessonName(namesEditActivity.this,nameID);
+                    ln.remove();
                     namesEditActivity.this.updateList();
                 }
             });
@@ -86,8 +84,7 @@ public class namesEditActivity extends AppCompatActivity {
     void updateList() {
         RecyclerView rv = findViewById(R.id.names_container);
 
-        LessonsStorage.NameRecord[] mames = ls.getNames();
-        RecyclerView.Adapter adapter = new namesAdapter(mames);
+        RecyclerView.Adapter adapter = new namesAdapter(LessonName.getNamesArray(this));
         RecyclerView.LayoutManager lm= new LinearLayoutManager(this);
 
         rv.setHasFixedSize(true);
@@ -99,8 +96,6 @@ public class namesEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_names_edit);
-        ls = new LessonsStorage(this);
-
         this.updateList();
 
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
@@ -115,8 +110,8 @@ public class namesEditActivity extends AppCompatActivity {
                     .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            LessonsStorage ls = new LessonsStorage(namesEditActivity.this);
-                            ls.nameAdd(prompt.getText().toString());
+                            LessonName newName = new LessonName(namesEditActivity.this, prompt.getText().toString());
+                            newName.write();
                             namesEditActivity.this.updateList();
                         }
                     }).create().show();
@@ -137,8 +132,9 @@ public class namesEditActivity extends AppCompatActivity {
     }
 
     void nameModDlalog(int id) {
-        final int fid = id;
-        String name = ls.getName(id);
+        final LessonName active = new LessonName(this, id);
+        String name = active.name;
+
         AlertDialog.Builder builder = new AlertDialog.Builder(namesEditActivity.this);
         final EditText prompt = new EditText(namesEditActivity.this);
         prompt.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -149,8 +145,8 @@ public class namesEditActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        LessonsStorage ls = new LessonsStorage(namesEditActivity.this);
-                        ls.nameMod(fid, prompt.getText().toString());
+                        active.name = prompt.getText().toString();
+                        active.write();
                         namesEditActivity.this.updateList();
                     }
                 }).create().show();

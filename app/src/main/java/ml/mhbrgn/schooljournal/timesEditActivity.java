@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,9 +24,9 @@ import android.widget.Toast;
 public class timesEditActivity extends AppCompatActivity {
 
     class TimesListAdapter extends RecyclerView.Adapter<TimesListAdapter.ViewHolder> {
-        private LessonsStorage.TimeRecord[] mData;
+        private LessonTime[] mData;
 
-        TimesListAdapter(LessonsStorage.TimeRecord[] d) {mData = d;}
+        TimesListAdapter(LessonTime[] d) {mData = d;}
 
         @NonNull
         @Override
@@ -41,8 +40,8 @@ public class timesEditActivity extends AppCompatActivity {
         @SuppressLint("SetTextI18n")
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            String startTime = LessonsStorage.timeToString(mData[position].startTime);
-            String endTime = LessonsStorage.timeToString(mData[position].endTime);
+            String startTime = mData[position].startTimeString();
+            String endTime = mData[position].endTimeString();
 
             // Add padding to last item
             if(position == this.getItemCount()-1) {
@@ -51,7 +50,7 @@ public class timesEditActivity extends AppCompatActivity {
                 holder.root.setLayoutParams(params);
             }
 
-            holder.num.setText(String.valueOf(position+1));
+            holder.num.setText(String.valueOf(mData[position].number));
             holder.name.setText(startTime+"-"+endTime);
             holder.removeBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -59,7 +58,8 @@ public class timesEditActivity extends AppCompatActivity {
                     TextView tv = ((View)v.getParent()).findViewById(R.id.text_number);
                     String sid = tv.getText().toString();
                     int id = Integer.parseInt(sid);
-                    ls.timeRem(id);
+                    LessonTime time = new LessonTime(timesEditActivity.this,id);
+                    time.remove();
                     timesEditActivity.this.updateList();
                 }
             });
@@ -93,8 +93,6 @@ public class timesEditActivity extends AppCompatActivity {
         }
     }
 
-    LessonsStorage ls = new LessonsStorage(this);
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,8 +122,8 @@ public class timesEditActivity extends AppCompatActivity {
     public void modTime(final int id) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
-        final View dv = inflater.inflate(R.layout.time_enter_dialog, null);
-        LessonsStorage.TimeRecord data = ls.getTime(id);
+        @SuppressLint("InflateParams") final View dv = inflater.inflate(R.layout.time_enter_dialog, null);
+        final LessonTime data = new LessonTime(this, id);
 
         // Find views and set values
         final EditText start_h = dv.findViewById(R.id.start_time_h);
@@ -151,9 +149,9 @@ public class timesEditActivity extends AppCompatActivity {
                 if(s_h > 23 || s_m > 60 || e_h > 23 || e_m > 60) {
                     Toast.makeText(timesEditActivity.this, R.string.incorrect_time, Toast.LENGTH_LONG).show();
                 } else {
-                    int st = s_h*60+s_m;
-                    int et = e_h*60+e_m;
-                    ls.timeMod(id, st, et);
+                    data.startTime = s_h*60+s_m;
+                    data.endTime = e_h*60+e_m;
+                    data.write();
                     timesEditActivity.this.updateList();
                 }
             }
@@ -169,7 +167,7 @@ public class timesEditActivity extends AppCompatActivity {
     public void addTime() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
-        final View dv = inflater.inflate(R.layout.time_enter_dialog, null);
+        @SuppressLint("InflateParams") final View dv = inflater.inflate(R.layout.time_enter_dialog, null);
 
         // Find views
         final EditText start_h = dv.findViewById(R.id.start_time_h);
@@ -190,7 +188,8 @@ public class timesEditActivity extends AppCompatActivity {
                 } else {
                     int st = s_h*60+s_m;
                     int et = e_h*60+e_m;
-                    ls.timeAdd(st, et);
+                    LessonTime newTime = new LessonTime(timesEditActivity.this,st,et);
+                    newTime.write();
                     timesEditActivity.this.updateList();
                 }
             }
@@ -204,7 +203,7 @@ public class timesEditActivity extends AppCompatActivity {
     }
 
     private void updateList() {
-        LessonsStorage.TimeRecord[] data = ls.getTimes();
+        LessonTime[] data = LessonTime.getTimesArray(this);
         RecyclerView box = findViewById(R.id.times_list);
         RecyclerView.Adapter adapter = new TimesListAdapter(data);
         RecyclerView.LayoutManager layman = new LinearLayoutManager(this);
@@ -233,7 +232,7 @@ public class timesEditActivity extends AppCompatActivity {
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                ls.timesRestore();
+                                LessonTime.restoreDefaults(timesEditActivity.this);
                                 timesEditActivity.this.updateList();
                             }
                         }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

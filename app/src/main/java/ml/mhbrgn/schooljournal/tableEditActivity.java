@@ -11,18 +11,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class tableEditActivity extends AppCompatActivity {
-    final LessonsStorage ls = new LessonsStorage(this);
-
-    // ====================================================================================
     class DailyTableAdapter extends RecyclerView.Adapter<DailyTableAdapter.ViewHolder> {
-        LessonsStorage.TableItem[] mData;
+        LessonsTableItem[] mData;
         int day;
 
-        DailyTableAdapter(LessonsStorage.TableItem[] data,int day) {
+        DailyTableAdapter(LessonsTableItem[] data,int day) {
             mData = data;
             this.day = day;
         }
@@ -48,13 +46,12 @@ public class tableEditActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull DailyTableAdapter.ViewHolder holder, int position) {
-            final int d_id = position+1;
-            final int d_day = day;
+            final LessonsTableItem data = mData[position];
 
-            holder.timeBox.setText(ls.getLessonTimeString(d_id));
+            holder.timeBox.setText(data.time.getTablePrefix());
 
-            if(mData[position] != null)
-                holder.nameBox.setText(String.valueOf(ls.getName(mData[position].lesson)));
+            if(data.defined)
+                holder.nameBox.setText(String.valueOf(data.lesson));
             else {
                 holder.nameBox.setText(R.string.empy_list_item);
                 holder.nameBox.setTextColor(ContextCompat.getColor(tableEditActivity.this,R.color.grey));
@@ -67,14 +64,13 @@ public class tableEditActivity extends AppCompatActivity {
                     BottomSheetDialog dialog = new BottomSheetDialog(tableEditActivity.this);
                     dialog.setCancelable(true);
 
-                    LessonsStorage.NameRecord[] names = ls.getNames();
+                    LessonName[] names = LessonName.getNamesArray(tableEditActivity.this);
 
                     RecyclerView rv = (RecyclerView) getLayoutInflater().inflate(R.layout.names_list_recycleview,
                             (ViewGroup) tableEditActivity.this.findViewById(R.id.root), false);
 
                     RecyclerView.LayoutManager lm = new LinearLayoutManager(tableEditActivity.this);
-                    RecyclerView.Adapter adapter = new NamesListAdapter(names, dialog,
-                            new LessonsStorage.TableItem(d_day, d_id, 0));
+                    RecyclerView.Adapter adapter = new NamesListAdapter(names, dialog, data);
 
                     rv.setLayoutManager(lm);
                     rv.setAdapter(adapter);
@@ -92,19 +88,20 @@ public class tableEditActivity extends AppCompatActivity {
             return mData.length;
         }
     }
+
     // ====================================================================================
     class NamesListAdapter extends RecyclerView.Adapter<NamesListAdapter.ViewHolder> {
-        LessonsStorage.NameRecord[] mData;
+        LessonName[] mData;
         BottomSheetDialog dialog;
-        final LessonsStorage.TableItem callback_item;
+        final LessonsTableItem callback_item;
 
-        NamesListAdapter(LessonsStorage.NameRecord[] data, BottomSheetDialog dialog, LessonsStorage.TableItem item) {
+        NamesListAdapter(LessonName[] data, BottomSheetDialog dialog, LessonsTableItem item) {
             // Build a array and add zero item
-            ArrayList<LessonsStorage.NameRecord> names = new ArrayList<>();
-            names.add(new LessonsStorage.NameRecord(0,getString(R.string.clean)));
+            ArrayList<LessonName> names = new ArrayList<>();
+            names.add(new LessonName(tableEditActivity.this,0,getString(R.string.clean)));
             Collections.addAll(names, data);
 
-            mData = names.toArray(new LessonsStorage.NameRecord[names.size()]);
+            mData = names.toArray(new LessonName[names.size()]);
             callback_item = item;
             this.dialog = dialog;
         }
@@ -130,14 +127,18 @@ public class tableEditActivity extends AppCompatActivity {
             final int nameID = mData[position].id;
             final BottomSheetDialog d = dialog;
             holder.text.setText(mData[position].name);
+            // Colorize active item
+            if(callback_item.lesson_id == mData[position].id) holder.text.setTextColor(ContextCompat.getColor(tableEditActivity.this,R.color.colorAccent));
+
             holder.root.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     d.hide();
                     int day = callback_item.day;
-                    int num = callback_item.n;
-                    if(nameID > 0) ls.tableSet(day,num,nameID);
-                    else ls.tableRem(day,num);
+                    int num = callback_item.num;
+                    LessonsTableItem ti = new LessonsTableItem(tableEditActivity.this,day,num,nameID);
+                    if(nameID < 1) ti.remove(); // Remove from table
+                    else ti.write(); // Save
                     tableEditActivity.this.updateList();
                 }
             });
@@ -149,7 +150,7 @@ public class tableEditActivity extends AppCompatActivity {
         }
     }
     // ====================================================================================
-    static int current_day = LessonsStorage.getCurrentDay();
+    static int current_day = TableTools.getCurrentDay();
     static int work_days = 5;
 
     @Override
@@ -182,15 +183,15 @@ public class tableEditActivity extends AppCompatActivity {
     }
 
     void updateVars() {
-        work_days = Integer.parseInt(ls.getPref("workDays"));
+        //work_days = Integer.parseInt(ls.getPref("workDays"));
     }
 
     void updateList() {
         // 1 - Update day in box
-        ( (TextView) findViewById(R.id.text_weekday) ).setText(LessonsStorage.getDayName(current_day,this));
+        ( (TextView) findViewById(R.id.text_weekday) ).setText(TableTools.getDayName(current_day,this));
 
         // 2 - Create table
-        LessonsStorage.TableItem[] data = ls.getDayLessons(current_day).content;
+        LessonsTableItem[] data = LessonsTable.getDay(this, current_day);
         RecyclerView.Adapter adapter = new DailyTableAdapter(data, current_day);
         RecyclerView.LayoutManager lm = new LinearLayoutManager(this);
 
