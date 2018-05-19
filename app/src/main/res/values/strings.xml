@@ -21,23 +21,16 @@
     <string name="about_info">School Journal beta, 2018</string>
     <string name="about_author">Michael Bergen</string>
     <string name="about_website">https://mhbrgn.ml/</string>
-    <string name="eidit_times">Edit times</string>
+    <string name="edit_times">Edit times</string>
     <string name="sym_1">1</string>
     <string name="delete_this_time">Delete this time</string>
-    <string name="start_time">Start time:</string>
-    <string name="end_time">End time:</string>
-    <string name="add">Add</string>
     <string name="cancel">Cancel</string>
-    <string name="dubledot">:</string>
-    <string name="incorrect_time">Incorrect time format</string>
     <string name="reset_defs">Reset defaults</string>
     <string name="ok">OK</string>
     <string name="times_wipe_msg">All your times will be removed and replaced with default table.</string>
     <string name="times_wipe_title">Restore default times?</string>
     <string name="edit_names">Edit names</string>
-    <string name="name_add">Create new lesson name:</string>
     <string name="input_lesson_name">Lesson name</string>
-    <string name="name_mod">Modify name</string>
     <string name="table_num_demo">1 12:00</string>
     <string name="table_edit">Edit table</string>
     <string name="empy_list_item">Nothing</string>
@@ -56,6 +49,19 @@
     <string name="literature">Literature</string>
     <string name="english">English</string>
     <string name="algebra">Algebra</string>
+    <string name="end_time_demo">End time: 09:00</string>
+    <string name="start_time_demo">Start time: 08:20</string>
+    <string name="configure_times">Configure times:</string>
+
+    <string name="start_time_ph">Start time: %1$s</string>
+    <string name="end_time_ph">End time: %1$s</string>
+    <string name="enter_lesson_name">Enter lesson name:</string>
+    
+    <string name="weekend_edit">Select weekend</string>
+    <string name="weekend_desc">Select work days that will be displayed in table</string>
+    <string name="weekend_off">Hide weekend days</string>
+    <string name="weekend_1">Show sunday</string>
+    <string name="weekend_2">Show sunday and saturday</string>
 
 </resources>
 

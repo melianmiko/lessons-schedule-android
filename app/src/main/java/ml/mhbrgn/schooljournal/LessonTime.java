@@ -61,6 +61,11 @@ public class LessonTime {
         return sh+":"+sm;
     }
 
+    int startHours() {return (int) Math.floor(startTime/60);}
+    int startMinutes() {return (int) Math.floor(startTime-(Math.floor(startTime/60))*60);}
+    int endHours() {return (int) Math.floor(endTime/60);}
+    int endMinutes() {return (int) Math.floor(endTime-(Math.floor(endTime/60))*60);}
+
     String endTimeString() {
         int h = (int) Math.floor(endTime/60);
         int m = (int) Math.floor(endTime-h*60);

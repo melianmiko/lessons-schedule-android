@@ -1,18 +1,14 @@
 package ml.mhbrgn.schooljournal;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -53,7 +49,7 @@ public class namesEditActivity extends AppCompatActivity {
             holder.root.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    namesEditActivity.this.nameModDlalog(nameID);
+                    namesEditActivity.this.nameModDialog(nameID);
                 }
             });
 
@@ -101,21 +97,13 @@ public class namesEditActivity extends AppCompatActivity {
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(namesEditActivity.this);
-                final EditText prompt = new EditText(namesEditActivity.this);
-                prompt.setInputType(InputType.TYPE_CLASS_TEXT);
-                prompt.setHint(R.string.input_lesson_name);
-
-                builder.setTitle(R.string.name_add).setView(prompt).setNegativeButton(R.string.cancel,null)
-                    .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            LessonName newName = new LessonName(namesEditActivity.this, prompt.getText().toString());
-                            newName.write();
-                            namesEditActivity.this.updateList();
-                        }
-                    }).create().show();
-
+                new NameEditUI(namesEditActivity.this, new LessonName(namesEditActivity.this,""), new NameEditUI.OnCompleteListener(){
+                    @Override
+                    void onComplete(LessonName name) {
+                        name.write();
+                        updateList();
+                    }
+                });
             }
         });
 
@@ -131,25 +119,14 @@ public class namesEditActivity extends AppCompatActivity {
         });
     }
 
-    void nameModDlalog(int id) {
-        final LessonName active = new LessonName(this, id);
-        String name = active.name;
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(namesEditActivity.this);
-        final EditText prompt = new EditText(namesEditActivity.this);
-        prompt.setInputType(InputType.TYPE_CLASS_TEXT);
-        prompt.setHint(R.string.input_lesson_name);
-        prompt.setText(name);
-
-        builder.setTitle(R.string.name_mod).setView(prompt).setNegativeButton(R.string.cancel,null)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        active.name = prompt.getText().toString();
-                        active.write();
-                        namesEditActivity.this.updateList();
-                    }
-                }).create().show();
-
+    void nameModDialog(int id) {
+        LessonName active = new LessonName(this, id);
+        new NameEditUI(this, active, new NameEditUI.OnCompleteListener(){
+            @Override
+            void onComplete(LessonName name) {
+                name.write();
+                updateList();
+            }
+        });
     }
 }

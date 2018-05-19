@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,6 +97,13 @@ public class settingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 settingsActivity.this.startActivity(new Intent(settingsActivity.this, namesEditActivity.class));
+            }
+        }));
+
+        menu.add(new ListItem(R.string.weekend_edit, R.string.weekend_desc, R.drawable.baseline_weekend_black_24, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new WeekendSetupUI(settingsActivity.this);
             }
         }));
 

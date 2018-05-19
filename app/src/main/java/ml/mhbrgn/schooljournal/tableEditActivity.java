@@ -15,6 +15,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 
+
 public class tableEditActivity extends AppCompatActivity {
     class DailyTableAdapter extends RecyclerView.Adapter<DailyTableAdapter.ViewHolder> {
         LessonsTableItem[] mData;
@@ -157,12 +158,13 @@ public class tableEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_table_edit);
+        work_days = getSharedPreferences("prefs",MODE_PRIVATE).getInt("work_days",5);
+        if(current_day > work_days) current_day = 1;
 
         findViewById(R.id.day_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 current_day--;
-                updateVars();
                 if(current_day < 1) current_day = work_days;
                 updateList();
             }
@@ -172,18 +174,12 @@ public class tableEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 current_day++;
-                updateVars();
                 if(current_day > work_days) current_day = 1;
                 updateList();
             }
         });
 
-        this.updateVars();
         this.updateList();
-    }
-
-    void updateVars() {
-        //work_days = Integer.parseInt(ls.getPref("workDays"));
     }
 
     void updateList() {

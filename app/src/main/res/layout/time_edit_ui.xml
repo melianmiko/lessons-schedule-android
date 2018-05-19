@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/configure_times"
+        android:textColor="#000"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:layout_margin="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:background="@drawable/list_item"
+        android:id="@+id/start_time_root"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:src="@drawable/baseline_access_time_black_24"
+            android:tint="@color/colorAccent"
+            android:contentDescription="@string/icon" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/start_time_demo"
+            android:textColor="#000"
+            android:id="@+id/start_time_text"
+            android:textSize="16sp"
+            android:layout_margin="18dp"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:background="@drawable/list_item"
+        android:id="@+id/end_time_root"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:src="@drawable/baseline_access_time_black_24"
+            android:tint="@color/colorAccent"
+            android:contentDescription="@string/icon" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/end_time_demo"
+            android:textColor="#000"
+            android:id="@+id/end_time_text"
+            android:textSize="16sp"
+            android:layout_margin="18dp"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:padding="16dp">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:textColor="@color/colorAccent"
+            android:text="@string/cancel"
+            android:id="@+id/btn_cancel"
+            android:layout_marginEnd="8dp"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:background="@color/colorAccent"
+            android:textColor="@color/white"
+            android:id="@+id/btn_ok"
+            android:text="@string/ok"/>
+
+    </LinearLayout>
+
+</LinearLayout>

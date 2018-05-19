@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--suppress ALL -->
+<resources>
+
+    <style name="Dialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:timePickerDialogTheme">@style/AppTheme2</item>
+    </style>
+
+    <style name="AppTheme2" parent="AppTheme">
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+</resources>

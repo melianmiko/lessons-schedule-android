@@ -23,7 +23,7 @@
             android:label="@string/settingsTitle"
             android:parentActivityName=".MainActivity"/>
         <activity android:name=".timesEditActivity"
-            android:label="@string/eidit_times"
+            android:label="@string/edit_times"
             android:parentActivityName=".settingsActivity"/>
         <activity android:name="namesEditActivity"
             android:label="@string/edit_names"

@@ -14,10 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 // ======================================================================
 
@@ -119,87 +117,38 @@ public class timesEditActivity extends AppCompatActivity {
         });
     }
 
-    public void modTime(final int id) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = getLayoutInflater();
-        @SuppressLint("InflateParams") final View dv = inflater.inflate(R.layout.time_enter_dialog, null);
-        final LessonTime data = new LessonTime(this, id);
+    public void modTime(int id) {
+        LessonTime time = new LessonTime(this, id);
+        TimeEditUI ui = new TimeEditUI(this, time);
 
-        // Find views and set values
-        final EditText start_h = dv.findViewById(R.id.start_time_h);
-        start_h.setText(String.valueOf(Math.floor(data.startTime/60)));
-        final EditText start_m = dv.findViewById(R.id.start_time_m);
-        start_m.setText(String.valueOf(data.startTime-Math.floor(Math.floor(data.startTime/60)*60)));
-
-        final EditText end_h = dv.findViewById(R.id.end_time_h);
-        end_h.setText(String.valueOf(Math.floor(data.endTime/60)));
-        final EditText end_m = dv.findViewById(R.id.end_time_m);
-        end_m.setText(String.valueOf(data.endTime-Math.floor(Math.floor(data.endTime/60)*60)));
-
-        builder.setView(dv).setPositiveButton(R.string.add,new DialogInterface.OnClickListener(){
+        ui.setOnCompleteListener(new TimeEditUI.OnCompleteListener(){
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                int s_h = Integer.parseInt(start_h.getText().toString());
-                int s_m = Integer.parseInt(start_m.getText().toString());
-                int e_h = Integer.parseInt(end_h.getText().toString());
-                int e_m = Integer.parseInt(end_m.getText().toString());
-
-                Toast.makeText(timesEditActivity.this, "sH "+s_h+" sM "+s_m+" eH "+e_h+" eM "+e_m, Toast.LENGTH_SHORT).show();
-
-                if(s_h > 23 || s_m > 60 || e_h > 23 || e_m > 60) {
-                    Toast.makeText(timesEditActivity.this, R.string.incorrect_time, Toast.LENGTH_LONG).show();
-                } else {
-                    data.startTime = s_h*60+s_m;
-                    data.endTime = e_h*60+e_m;
-                    data.write();
-                    timesEditActivity.this.updateList();
-                }
-            }
-        }).setNegativeButton(R.string.cancel,new DialogInterface.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Noting to do
+            void onComplete(LessonTime time) {
+                time.write();
+                timesEditActivity.this.updateList();
             }
         });
-        builder.create().show();
+
+        ui.show();
     }
 
     public void addTime() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = getLayoutInflater();
-        @SuppressLint("InflateParams") final View dv = inflater.inflate(R.layout.time_enter_dialog, null);
-
-        // Find views
-        final EditText start_h = dv.findViewById(R.id.start_time_h);
-        final EditText start_m = dv.findViewById(R.id.start_time_m);
-        final EditText end_h = dv.findViewById(R.id.end_time_h);
-        final EditText end_m = dv.findViewById(R.id.end_time_m);
-
-        builder.setView(dv).setPositiveButton(R.string.add,new DialogInterface.OnClickListener(){
+        // Get last record
+        LessonTime[] data = LessonTime.getTimesArray(this);
+        LessonTime last = data[data.length-1];
+        // Create new time. ID = last+1, START = lastStart+10, END lastStart+50
+        final LessonTime newTime = new LessonTime(this,last.startTime+10,last.startTime+50);
+        newTime.number = last.number+1;
+        // Create dialog
+        TimeEditUI ui = new TimeEditUI(this,newTime);
+        ui.setOnCompleteListener(new TimeEditUI.OnCompleteListener(){
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                int s_h = Integer.parseInt(start_h.getText().toString());
-                int s_m = Integer.parseInt(start_m.getText().toString());
-                int e_h = Integer.parseInt(end_h.getText().toString());
-                int e_m = Integer.parseInt(end_m.getText().toString());
-
-                if(s_h > 23 || s_m > 60 || e_h > 23 || e_m > 60) {
-                    Toast.makeText(timesEditActivity.this, R.string.incorrect_time, Toast.LENGTH_LONG).show();
-                } else {
-                    int st = s_h*60+s_m;
-                    int et = e_h*60+e_m;
-                    LessonTime newTime = new LessonTime(timesEditActivity.this,st,et);
-                    newTime.write();
-                    timesEditActivity.this.updateList();
-                }
-            }
-        }).setNegativeButton(R.string.cancel,new DialogInterface.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Noting to do
+            void onComplete(LessonTime time) {
+                newTime.write();
+                updateList();
             }
         });
-        builder.create().show();
+        ui.show();
     }
 
     private void updateList() {
