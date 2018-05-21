@@ -1,49 +1,103 @@
 package ml.mhbrgn.schooljournal;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+//@SuppressWarnings("WeakerAccess")
 @SuppressWarnings("WeakerAccess")
-public class LessonTime {
-
-    static void restoreDefaults(Context context) {
-        // Create DB connection
-        LessonsDB con = new LessonsDB(context);
-        SQLiteDatabase db = con.getWritableDatabase();
-
-        // Copy from con.times to data
-        db.execSQL("DELETE FROM times");
-        for(int[] i : con.times) (new LessonTime(context,i[0],i[1])).write();
-    }
-
-    static LessonTime[] getTimesArray(Context context) {
-        // Create DB connection
-        LessonsDB con = new LessonsDB(context);
-        SQLiteDatabase db = con.getWritableDatabase();
-        // Define array
-        ArrayList<LessonTime> out = new ArrayList<>();
-        // Get All IDS
-        Cursor c = db.rawQuery("SELECT id FROM times",null);
-        if(c.moveToFirst()) {
-            out.add(new LessonTime(context,c.getInt(c.getColumnIndex("id"))));
-            while (c.moveToNext()) out.add(new LessonTime(context,c.getInt(c.getColumnIndex("id"))));
-        }
-        c.close();
-        return out.toArray(new LessonTime[out.size()]);
-    }
-
-    LessonsDB lessonsDB;
-    Context context;
-    boolean isDefined = false;
-    boolean isSaved = false;
+class LessonTime {
+    private DataStorage dataCon;
     int number = -1;
     int startTime;
     int endTime;
 
-    // To string converters
+    static LessonTime[] getTimesArray(Context context) {return getTimesArray(new DataStorage(context));}
+    static LessonTime[] getTimesArray(DataStorage dataCon) {
+        ArrayList<LessonTime> out = new ArrayList<>();
+        JSONArray times = dataCon.getTimes();
+        for(int i = 0; i < times.length(); i++) out.add(new LessonTime(dataCon, i));
+        return out.toArray(new LessonTime[out.size()]);
+    }
+
+    // Setup only ID
+    LessonTime(DataStorage dataCon, int id) {
+        this.dataCon = dataCon;
+        this.number = id;
+        dataRead();
+    }
+
+    LessonTime(Context context, int id) { this(new DataStorage(context), id); }
+
+    // Setup times only
+    LessonTime(DataStorage dataCon, int startTime, int endTime) {
+        this.dataCon = dataCon;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
+    LessonTime(Context context, int startTime, int endTime) {
+        this(new DataStorage(context),startTime,endTime);
+    }
+
+    void write() {
+        JSONObject out = new JSONObject();
+
+        if(number == -1) number = dataCon.getTimes().length();
+
+        try {
+
+            out.put("startTime", startTime);
+            out.put("endTime",endTime);
+
+            JSONArray times = dataCon.getTimes();
+            times.put(number, out);
+
+            dataCon.setTimes(times);
+
+        } catch (JSONException ignored) { }
+    }
+
+    void remove() {
+        JSONArray in = dataCon.getTimes();
+
+        if(number == -1) return;
+        if(in.isNull(number)) return;
+
+        try {
+
+            in.put(number, JSONObject.NULL);
+            // Do rebase
+            JSONArray out = new JSONArray();
+            for(int i = 0; i < in.length(); i++) {
+                if(!in.isNull(i)) out.put(in.getJSONObject(i));
+            }
+
+            dataCon.setTimes(out);
+
+        } catch (JSONException ignored) { }
+    }
+
+    // Private (technical)
+
+    private void dataRead() {
+        if(number == -1) return; // No id
+        JSONArray times = dataCon.getTimes();
+        if(times == null) return;
+        if(times.isNull(number)) return;
+        // Get!
+        try {
+            JSONObject time = times.getJSONObject(number);
+            startTime = time.getInt("startTime");
+            endTime = time.getInt("endTime");
+        } catch (JSONException e) { e.printStackTrace(); }
+    }
+
+    // Converters
     String getTablePrefix() {
         return number+" "+startTimeString();
     }
@@ -79,75 +133,15 @@ public class LessonTime {
         return sh+":"+sm;
     }
 
-    // Remove from storage
-    void remove() {
-        if(this.checkDefined()) {
-            SQLiteDatabase db = lessonsDB.getWritableDatabase();
-            db.execSQL("DELETE FROM times WHERE id="+this.number);
-            // Rebase storage
-            LessonTime[] times = LessonTime.getTimesArray(this.context);
-            db.execSQL("DELETE FROM times");
-            for(LessonTime i : times) (new LessonTime(this.context, i.startTime, i.endTime)).write();
-        }
-    }
+    static void restoreDefaults(Context context) {
+        int[][] times = new int[][]{
+                new int[]{500,540}, new int[]{545,585}, new int[]{600,640}, new int[]{655,695},
+                new int[]{705,745}, new int[]{755,795}, new int[]{805,845}, new int[]{855,895}
+        };
 
-    // Get from storage
-    void storageGet() {
-        SQLiteDatabase db = lessonsDB.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM times WHERE id="+this.number,null);
-        if(cursor.moveToFirst()) {
-            this.startTime = cursor.getInt(cursor.getColumnIndex("startTime"));
-            this.endTime = cursor.getInt(cursor.getColumnIndex("endTime"));
-            this.isDefined = true;
-            this.isSaved = true;
-            cursor.close();
-            return;
-        }
-        cursor.close();
-    }
+        DataStorage dataCon = new DataStorage(context);
 
-    // Check defined
-    boolean checkDefined() {
-        SQLiteDatabase db = lessonsDB.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM times WHERE id="+this.number,null);
-        if(cursor.moveToFirst()) {
-            cursor.close();
-            return true;
-        }
-        cursor.close();
-        return false;
-    }
-
-
-    // Write to storage
-    void write() {
-        SQLiteDatabase db = lessonsDB.getWritableDatabase();
-        if(this.number == -1) this.number = LessonTime.getTimesArray(context).length+1;
-        if(checkDefined()) {
-            // Update
-            db.execSQL("UPDATE times SET startTime="+this.startTime+", endTime="+this.endTime+" WHERE id="+this.number);
-            this.isSaved = true;
-        } else {
-            // Insert
-            db.execSQL("INSERT INTO times(id,startTime,endTime) VALUES ("+this.number+","+this.startTime+","+this.endTime+")");
-        }
-    }
-
-    // Create new time
-    LessonTime(Context context, int start, int end) {
-        this.lessonsDB = new LessonsDB(context);
-        this.context = context;
-        this.isDefined = true;
-        this.startTime = start;
-        this.endTime = end;
-    }
-
-    // Create from ID
-    LessonTime(Context context, int id) {
-        this.lessonsDB = new LessonsDB(context);
-        this.context = context;
-        this.number = id;
-        this.storageGet();
+        for (int[] time : times) (new LessonTime(dataCon, time[0], time[1])).write();
     }
 }
 

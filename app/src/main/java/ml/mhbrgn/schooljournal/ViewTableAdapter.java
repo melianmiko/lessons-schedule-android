@@ -32,7 +32,7 @@ class ViewTableAdapter extends RecyclerView.Adapter<ViewTableAdapter.ViewHolder>
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.nameBox.setText(mData[position].lesson);
-        holder.numberBox.setText(mData[position].time.getTablePrefix());
+        holder.numberBox.setText(mData[position].getTime().getTablePrefix());
         if(mData[position].lesson_id < 1) ((ViewGroup)holder.root).removeAllViews();
     }
 

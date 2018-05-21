@@ -49,7 +49,7 @@ public class tableEditActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull DailyTableAdapter.ViewHolder holder, int position) {
             final LessonsTableItem data = mData[position];
 
-            holder.timeBox.setText(data.time.getTablePrefix());
+            holder.timeBox.setText(data.getTime().getTablePrefix());
 
             if(data.defined)
                 holder.nameBox.setText(String.valueOf(data.lesson));

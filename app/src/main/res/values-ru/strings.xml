@@ -16,7 +16,6 @@
     <string name="notification">Уведомление</string>
     <string name="day_back">Предыдущий день</string>
     <string name="about_info">Расписание уроков Beta, 2018</string>
-    <string name="about_author">Михаэль Берген</string>
     <string name="delete_this_time">Удалить урок</string>
     <string name="cancel">Отмена</string>
     <string name="reset_defs">Восстановить умолчания</string>
@@ -39,4 +38,17 @@
     <string name="literature">Литература</string>
     <string name="english">Русский язык</string>
     <string name="algebra">Алгебра</string>
+    <string name="edit_times">Изменить время</string>
+    <string name="end_time_demo">Окончание: 09:00</string>
+    <string name="start_time_demo">Начало: 08:20</string>
+    <string name="configure_times">Настроить время урока</string>
+    <string name="start_time_ph">Начало: %1$s</string>
+    <string name="end_time_ph">Окончание: %1$s</string>
+    <string name="enter_lesson_name">Название уорка</string>
+    <string name="weekend_edit">Дни недели</string>
+    <string name="weekend_desc">Выбор дней для отображения в расписании</string>
+    <string name="weekend_off">Только будни</string>
+    <string name="weekend_1">Показать субботу</string>
+    <string name="weekend_2">Показать субботу и воскресенье</string>
+    <string name="about_title">О программе</string>
 </resources>

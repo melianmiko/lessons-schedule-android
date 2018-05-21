@@ -1,6 +1,6 @@
 <resources>
     <string name="icon">Icon</string>
-    <string name="app_name">School journal</string>
+    <string name="app_name">Lessons Shedule</string>
     <!-- Title bars -->
     <string name="action_settings">Settings</string>
     <string name="lessonsTitle">Lessons</string>
@@ -18,20 +18,17 @@
     <string name="notification">Notification</string>
     <string name="day_back">Day back</string>
     <!-- About info -->
-    <string name="about_info">School Journal beta, 2018</string>
-    <string name="about_author">Michael Bergen</string>
-    <string name="about_website">https://mhbrgn.ml/</string>
     <string name="edit_times">Edit times</string>
-    <string name="sym_1">1</string>
+    <string name="sym_1" translatable="false">1</string>
     <string name="delete_this_time">Delete this time</string>
     <string name="cancel">Cancel</string>
     <string name="reset_defs">Reset defaults</string>
-    <string name="ok">OK</string>
+    <string name="ok" translatable="false">OK</string>
     <string name="times_wipe_msg">All your times will be removed and replaced with default table.</string>
     <string name="times_wipe_title">Restore default times?</string>
     <string name="edit_names">Edit names</string>
     <string name="input_lesson_name">Lesson name</string>
-    <string name="table_num_demo">1 12:00</string>
+    <string name="table_num_demo" translatable="false">1 12:00</string>
     <string name="table_edit">Edit table</string>
     <string name="empy_list_item">Nothing</string>
     <string name="clean">Remove</string>
@@ -62,6 +59,8 @@
     <string name="weekend_off">Hide weekend days</string>
     <string name="weekend_1">Show sunday</string>
     <string name="weekend_2">Show sunday and saturday</string>
+    <string name="about_title">About \"Lessons Shedule\"</string>
+    <string name="about_info">Lessons Shedule beta, 2018</string>
 
 </resources>
 

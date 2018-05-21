@@ -7,39 +7,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/settings_menu"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:scrollbars="none" />
     
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/grey"
-            android:textSize="12sp"
-            android:text="@string/about_info"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/grey"
-            android:textSize="12sp"
-            android:text="@string/about_author"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/grey"
-            android:textSize="12sp"
-            android:text="@string/about_website"/>
-
-    </LinearLayout>
-
 </LinearLayout>

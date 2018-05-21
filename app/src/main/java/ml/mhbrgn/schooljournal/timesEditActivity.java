@@ -48,14 +48,14 @@ public class timesEditActivity extends AppCompatActivity {
                 holder.root.setLayoutParams(params);
             }
 
-            holder.num.setText(String.valueOf(mData[position].number));
+            holder.num.setText(String.valueOf(mData[position].number+1));
             holder.name.setText(startTime+"-"+endTime);
             holder.removeBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     TextView tv = ((View)v.getParent()).findViewById(R.id.text_number);
                     String sid = tv.getText().toString();
-                    int id = Integer.parseInt(sid);
+                    int id = Integer.parseInt(sid)-1;
                     LessonTime time = new LessonTime(timesEditActivity.this,id);
                     time.remove();
                     timesEditActivity.this.updateList();
@@ -66,7 +66,7 @@ public class timesEditActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     TextView tv = v.findViewById(R.id.text_number);
                     String sid = tv.getText().toString();
-                    timesEditActivity.this.modTime(Integer.parseInt(sid));
+                    timesEditActivity.this.modTime(Integer.parseInt(sid)-1);
                 }
             });
         }
@@ -135,16 +135,20 @@ public class timesEditActivity extends AppCompatActivity {
     public void addTime() {
         // Get last record
         LessonTime[] data = LessonTime.getTimesArray(this);
-        LessonTime last = data[data.length-1];
-        // Create new time. ID = last+1, START = lastStart+10, END lastStart+50
-        final LessonTime newTime = new LessonTime(this,last.startTime+10,last.startTime+50);
-        newTime.number = last.number+1;
+        LessonTime newTime = new LessonTime(this, 500, 540);
+        if(data.length > 1) {
+            LessonTime last = data[data.length - 1];
+            // Create new time. ID = last+1, START = lastStart+10, END lastStart+50
+            newTime = new LessonTime(this, last.startTime + 10, last.startTime + 50);
+            newTime.number = last.number + 1;
+        }
         // Create dialog
         TimeEditUI ui = new TimeEditUI(this,newTime);
+        final LessonTime finalNewTime = newTime;
         ui.setOnCompleteListener(new TimeEditUI.OnCompleteListener(){
             @Override
             void onComplete(LessonTime time) {
-                newTime.write();
+                finalNewTime.write();
                 updateList();
             }
         });

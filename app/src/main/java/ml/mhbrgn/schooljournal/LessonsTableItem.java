@@ -7,22 +7,26 @@ import android.database.sqlite.SQLiteDatabase;
 @SuppressWarnings({"FieldCanBeLocal", "WeakerAccess"})
 public class LessonsTableItem {
     private LessonsDB lessonsDB;
+    Context context;
     int day; int num;
     int lesson_id;
     String lesson;
-    LessonTime time;
     boolean defined = false;
 
     // Remove from table
     void remove() {
         SQLiteDatabase db = lessonsDB.getWritableDatabase();
-        db.execSQL("DELETE FROM lessonsTable WHERE day="+day+" AND number="+num);
+        db.execSQL("DELETE FROM lessonsTable WHERE day="+day+" AND number="+num+" LIMIT 1");
+    }
+
+    LessonTime getTime() {
+        return new LessonTime(context,num);
     }
 
     // Check defined
     boolean checkDefined() {
         SQLiteDatabase db = lessonsDB.getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM lessonsTable WHERE day="+day+" AND number="+num,null);
+        Cursor c = db.rawQuery("SELECT * FROM lessonsTable WHERE day="+day+" AND number="+num+" LIMIT 1",null);
         if(c.moveToFirst()) {
             c.close();
             return true;
@@ -46,7 +50,7 @@ public class LessonsTableItem {
     // Get data from storage
     private void storageGet() {
         SQLiteDatabase db = lessonsDB.getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM lessonsTable WHERE day="+day+" AND number="+num,null);
+        Cursor c = db.rawQuery("SELECT * FROM lessonsTable WHERE day="+day+" AND number="+num+" LIMIT 1",null);
         if(c.moveToFirst()) {
             this.lesson_id = c.getInt(c.getColumnIndex("lesson"));
             this.defined = true;
@@ -64,7 +68,7 @@ public class LessonsTableItem {
     // Create new item
     LessonsTableItem(Context context, int day, int number, int lesson) {
         this.lessonsDB = new LessonsDB(context);
-        this.time = new LessonTime(context,number);
+        this.context = context;
         this.day = day;
         this.num = number;
         this.lesson_id = lesson;
@@ -75,7 +79,7 @@ public class LessonsTableItem {
     // Load from storage
     LessonsTableItem(Context context, int day, int number) {
         this.lessonsDB = new LessonsDB(context);
-        this.time = new LessonTime(context,number);
+        this.context = context;
         this.day = day;
         this.num = number;
         this.storageGet();

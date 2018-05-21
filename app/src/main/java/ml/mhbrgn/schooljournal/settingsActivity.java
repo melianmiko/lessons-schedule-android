@@ -60,8 +60,6 @@ public class settingsActivity extends AppCompatActivity {
         // Replace the contents of a view (invoked by the layout manager)
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            // - get element from your dataset at this position
-            // - replace the contents of the view with that element
             holder.mTextView.setText(mData[position].title);
             holder.mDescView.setText(mData[position].description);
             holder.mIconView.setImageDrawable(mData[position].icon);
@@ -108,6 +106,13 @@ public class settingsActivity extends AppCompatActivity {
         }));
 
         menu.add(new ListItem(R.string.appearance, R.string.appearanceDesc, R.drawable.baseline_palette_black_24, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        }));
+
+        menu.add(new ListItem(R.string.about_title,R.string.about_info, R.drawable.baseline_info_black_24, new View.OnClickListener(){
             @Override
             public void onClick(View v) {
 

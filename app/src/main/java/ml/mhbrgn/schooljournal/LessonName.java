@@ -16,7 +16,7 @@ public class LessonName {
         SQLiteDatabase db = con.getWritableDatabase();
         // Read all!
         ArrayList<LessonName> out = new ArrayList<>();
-        Cursor c = db.rawQuery("SELECT * FROM lessons",null);
+        Cursor c = db.rawQuery("SELECT id FROM lessons",null);
         Log.i("SQL",c.toString());
         if(c.moveToFirst()) {
             out.add(new LessonName(context,c.getInt(c.getColumnIndex("id"))));
@@ -42,7 +42,7 @@ public class LessonName {
     boolean defineCheck() {
         if(this.id == -1) return false;
         SQLiteDatabase db = lessonDB.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT name FROM lessons WHERE id="+this.id,null);
+        Cursor cursor = db.rawQuery("SELECT name FROM lessons WHERE id="+this.id+" LIMIT 1",null);
         if(cursor.moveToFirst()) {
             cursor.close();
             return true;
@@ -55,7 +55,7 @@ public class LessonName {
     boolean storageGet() {
         if(this.id == -1) return false;
         SQLiteDatabase db = lessonDB.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT name FROM lessons WHERE id="+this.id,null);
+        Cursor cursor = db.rawQuery("SELECT name FROM lessons WHERE id="+this.id+" LIMIT 1",null);
         if(cursor.moveToFirst()) {
             this.name = cursor.getString(cursor.getColumnIndex("name"));
             this.isDefined = true;
