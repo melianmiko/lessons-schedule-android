@@ -61,6 +61,10 @@
     <string name="weekend_2">Show sunday and saturday</string>
     <string name="about_title">About \"Lessons Shedule\"</string>
     <string name="about_info">Lessons Shedule beta, 2018</string>
+    <string name="about_version">Alpha preview version</string>
+    <string name="about_author">Developed by Michael Bergen</string>
+    <string name="changelog">Changelog:</string>
+    <string name="logo_name">Application logo</string>
 
 </resources>
 

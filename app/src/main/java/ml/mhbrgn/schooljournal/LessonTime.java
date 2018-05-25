@@ -133,13 +133,14 @@ class LessonTime {
         return sh+":"+sm;
     }
 
-    static void restoreDefaults(Context context) {
+    static void restoreDefaults(Context context) {restoreDefaults(new DataStorage(context),context);}
+    static void restoreDefaults(DataStorage dataCon,Context context) {
         int[][] times = new int[][]{
                 new int[]{500,540}, new int[]{545,585}, new int[]{600,640}, new int[]{655,695},
                 new int[]{705,745}, new int[]{755,795}, new int[]{805,845}, new int[]{855,895}
         };
 
-        DataStorage dataCon = new DataStorage(context);
+        dataCon.setTimes(new JSONArray());
 
         for (int[] time : times) (new LessonTime(dataCon, time[0], time[1])).write();
     }

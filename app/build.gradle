@@ -2,6 +2,9 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
+    dexOptions {
+        javaMaxHeapSize '256m'
+    }
     defaultConfig {
         applicationId "ml.mhbrgn.schooljournal"
         minSdkVersion 17

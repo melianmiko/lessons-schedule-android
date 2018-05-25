@@ -1,120 +1,98 @@
 package ml.mhbrgn.schooljournal;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+import android.support.v4.content.ContextCompat;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 
 @SuppressWarnings("WeakerAccess")
 public class LessonName {
 
-    static LessonName[] getNamesArray(Context context) {
-        // DB connection
-        LessonsDB con = new LessonsDB(context);
-        SQLiteDatabase db = con.getWritableDatabase();
-        // Read all!
-        ArrayList<LessonName> out = new ArrayList<>();
-        Cursor c = db.rawQuery("SELECT id FROM lessons",null);
-        Log.i("SQL",c.toString());
-        if(c.moveToFirst()) {
-            out.add(new LessonName(context,c.getInt(c.getColumnIndex("id"))));
+    private DataStorage dataCon;
+    String name; int id = -1;
 
-            while (c.moveToNext()) {
-                int id = c.getInt(c.getColumnIndex("id"));
-                Log.i("DEBUG_ID","Found lesson ID:"+id);
-                out.add(new LessonName(context,c.getInt(c.getColumnIndex("id"))));
-            }
+    LessonName(Context context, int id) { this(new DataStorage(context), id); }
+    LessonName(DataStorage storage, int id) {
+        this.id = id;
+        this.dataCon = storage;
+        // Get string
+        try {
+            JSONArray names = storage.getNames();
+            name = names.getString(id);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        c.close();
+    }
+
+    LessonName(Context context, String name) {this(new DataStorage(context),name);}
+    LessonName(DataStorage storage, String name) {
+        this.dataCon = storage;
+        this.name = name;
+    }
+
+    LessonName(Context context, int id, String name) {this(new DataStorage(context), id, name);}
+    LessonName(DataStorage storage, int id, String name) {
+        this.id = id;
+        this.name = name;
+        this.dataCon = storage;
+    }
+
+    void write() {
+        JSONArray arr = dataCon.getNames();
+
+        if(id == -1) id = arr.length();
+
+        try {
+            arr.put(id,name);
+            dataCon.setNames(arr);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void remove() {
+        if(id == -1) return;
+        JSONArray arr = dataCon.getNames();
+        try {
+            arr.put(id,"");
+            dataCon.setNames(arr);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static LessonName[] getNamesArray(Context context) {
+        return getNamesArray(new DataStorage(context));
+    }
+    static LessonName[] getNamesArray(DataStorage dataCon) {
+        JSONArray names = dataCon.getNames();
+        ArrayList<LessonName> out = new ArrayList<>();
+
+        for(int i = 0; i < names.length(); i++) {
+            LessonName ln = new LessonName(dataCon, i);
+            if(ln.name.equals("")) continue;
+            out.add(ln);
+        }
+
         return out.toArray(new LessonName[out.size()]);
     }
 
-    private Context context;
-    private LessonsDB lessonDB;
+    static void restoreDefaults(Context context) {
+        restoreDefaults(new DataStorage(context),context);
+    }
+    static void restoreDefaults(DataStorage ds,Context context) {
+        int[] lessons = new int[]{
+                R.string.algebra, R.string.english, R.string.literature,
+                R.string.geometry, R.string.biology
+        };
 
-    boolean isDefined = false;
-    boolean isSaved = false;
-    int id = -1;
-    String name;
-
-    boolean defineCheck() {
-        if(this.id == -1) return false;
-        SQLiteDatabase db = lessonDB.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT name FROM lessons WHERE id="+this.id+" LIMIT 1",null);
-        if(cursor.moveToFirst()) {
-            cursor.close();
-            return true;
+        for(int i : lessons) {
+            LessonName ln = new LessonName(ds, context.getString(i));
+            ln.write();
         }
-        cursor.close();
-        return false;
-    }
 
-    // Get from storage
-    boolean storageGet() {
-        if(this.id == -1) return false;
-        SQLiteDatabase db = lessonDB.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT name FROM lessons WHERE id="+this.id+" LIMIT 1",null);
-        if(cursor.moveToFirst()) {
-            this.name = cursor.getString(cursor.getColumnIndex("name"));
-            this.isDefined = true;
-            this.isSaved = true;
-            cursor.close();
-            return true;
-        }
-        cursor.close();
-        return false;
-    }
-
-    // Remove from storage
-    void remove() {
-        SQLiteDatabase db = lessonDB.getWritableDatabase();
-        if(this.defineCheck()) {
-            db.execSQL("DELETE FROM lessons WHERE id="+this.id);
-        }
-    }
-
-    // Save to storage
-    void write() {
-        SQLiteDatabase db = lessonDB.getWritableDatabase();
-        if(this.defineCheck()) {
-            // Update
-            db.execSQL("UPDATE lessons SET name=\""+this.name+"\" WHERE id="+this.id);
-        } else {
-            // Insert
-            db.execSQL("INSERT INTO lessons(name) VALUES (\""+this.name+"\")");
-            // Get back my ID!
-            Cursor c = db.rawQuery("SELECT id FROM lessons WHERE name=\""+this.name+"\"",null);
-            c.moveToFirst();
-            this.id = c.getInt(c.getColumnIndex("id"));
-            Log.i("TEST","New lesson insert ID:"+this.id+", NAME: "+this.name);
-            c.close();
-        }
-    }
-
-    // Create from ID and NAME
-    LessonName(Context context, int id, String name) {
-        this.context = context;
-        this.lessonDB = new LessonsDB(context);
-        this.isDefined = true;
-        this.name = name;
-        this.id = id;
-    }
-
-    // Create new
-    LessonName(Context context, String name) {
-        this.context = context;
-        this.lessonDB = new LessonsDB(context);
-        this.isDefined = true;
-        this.name = name;
-    }
-
-    // Load from id
-    LessonName(Context context, int id) {
-        this.context = context;
-        this.lessonDB = new LessonsDB(context);
-        this.id = id;
-        this.storageGet();
     }
 }

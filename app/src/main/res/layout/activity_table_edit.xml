@@ -15,7 +15,7 @@
             android:layout_width="64dp"
             android:layout_height="56dp"
             android:id="@+id/day_back"
-            android:src="@drawable/baseline_arrow_left_black_24"
+            android:src="@drawable/ic_keyboard_arrow_left_black_24dp"
             android:contentDescription="@string/day_back" />
 
         <TextView
@@ -34,7 +34,7 @@
             android:layout_width="64dp"
             android:layout_height="56dp"
             android:id="@+id/day_next"
-            android:src="@drawable/baseline_arrow_right_black_24"
+            android:src="@drawable/ic_keyboard_arrow_right_black_24dp"
             android:contentDescription="@string/day_back"
             android:layout_alignParentEnd="true"/>
 

@@ -1,19 +1,27 @@
 package ml.mhbrgn.schooljournal;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,14 +84,14 @@ public class settingsActivity extends AppCompatActivity {
     void fillMenuContent() {
         List<ListItem> menu = new ArrayList<>();
         // Add items to menu
-        menu.add(new ListItem(R.string.editTable, R.string.editTableDesc, R.drawable.baseline_calendar_today_black_24, new View.OnClickListener() {
+        menu.add(new ListItem(R.string.editTable, R.string.editTableDesc, R.drawable.ic_today_black_24dp, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 settingsActivity.this.startActivity(new Intent(settingsActivity.this, tableEditActivity.class));
             }
         }));
 
-        menu.add(new ListItem(R.string.editTimes, R.string.editTimesDesc, R.drawable.baseline_access_time_black_24, new View.OnClickListener() {
+        menu.add(new ListItem(R.string.editTimes, R.string.editTimesDesc, R.drawable.ic_access_time_black_24dp, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent timeEdit = new Intent(settingsActivity.this, timesEditActivity.class);
@@ -91,31 +99,51 @@ public class settingsActivity extends AppCompatActivity {
             }
         }));
 
-        menu.add(new ListItem(R.string.editNames, R.string.editNamesDesc, R.drawable.baseline_list_black_24, new View.OnClickListener() {
+        menu.add(new ListItem(R.string.editNames, R.string.editNamesDesc, R.drawable.ic_list_black_24dp, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 settingsActivity.this.startActivity(new Intent(settingsActivity.this, namesEditActivity.class));
             }
         }));
 
-        menu.add(new ListItem(R.string.weekend_edit, R.string.weekend_desc, R.drawable.baseline_weekend_black_24, new View.OnClickListener() {
+        menu.add(new ListItem(R.string.weekend_edit, R.string.weekend_desc, R.drawable.ic_weekend_black_24dp, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new WeekendSetupUI(settingsActivity.this);
             }
         }));
 
-        menu.add(new ListItem(R.string.appearance, R.string.appearanceDesc, R.drawable.baseline_palette_black_24, new View.OnClickListener() {
+        menu.add(new ListItem(R.string.appearance, R.string.appearanceDesc, R.drawable.ic_palette_black_24dp, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
         }));
 
-        menu.add(new ListItem(R.string.about_title,R.string.about_info, R.drawable.baseline_info_black_24, new View.OnClickListener(){
+        menu.add(new ListItem(R.string.about_title,R.string.about_info, R.drawable.ic_info_black_24dp, new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                BottomSheetDialog dialog = new BottomSheetDialog(settingsActivity.this);
+                @SuppressLint("InflateParams") View view = getLayoutInflater().inflate(R.layout.about_dialog,null);
+                dialog.setContentView(view);
 
+                try {
+                    InputStream i = getAssets().open("changelog.html");
+                    BufferedReader in = new BufferedReader(new InputStreamReader(i));
+                    StringBuilder fileContent = new StringBuilder();
+
+                    String str;
+                    while ((str = in.readLine()) != null) { fileContent.append(str); }
+                    String out = fileContent.toString();
+                    Spanned htmlOut = Html.fromHtml(out);
+
+                    ((TextView)view.findViewById(R.id.changelog)).setText(htmlOut);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                dialog.show();
             }
         }));
 

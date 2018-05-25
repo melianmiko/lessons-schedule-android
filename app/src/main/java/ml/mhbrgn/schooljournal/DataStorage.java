@@ -74,8 +74,14 @@ class DataStorage {
         } else {
             try {
 
-                if (root.isNull("lessons")) root.put("lessons", new JSONArray());
-                if (root.isNull("times")) root.put("times", new JSONArray());
+                if (root.isNull("lessons")) {
+                    root.put("lessons", new JSONArray());
+                    LessonName.restoreDefaults(this,context);
+                }
+                if (root.isNull("times")) {
+                    root.put("times", new JSONArray());
+                    LessonTime.restoreDefaults(this, context);
+                }
                 if (root.isNull("preferences")) root.put("preferences",new JSONObject());
                 if (root.isNull("table")) root.put("table",new JSONArray());
 
@@ -102,6 +108,25 @@ class DataStorage {
             Log.i("TimeStorage", "Saved: "+this.toString());
         } catch (JSONException e) {
             Toast.makeText(context, "Times write failed", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+    JSONArray getNames() {
+        try {
+            return root.getJSONArray("lessons");
+        } catch (JSONException e) {
+            return new JSONArray();
+        }
+    }
+
+    void setNames(JSONArray names) {
+        try {
+            root.put("lessons",names);
+            fileWrite();
+            Log.i("lessonsStorage", "Saved: "+this.toString());
+        } catch (JSONException e) {
+            Toast.makeText(context, "Names write failed", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
