@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:icon="@drawable/ic_restore_black_24dp"
         android:id="@+id/times_wipe"
-        android:title="@string/reset_defs"
+        android:title="@string/reset_defaults"
         android:orderInCategory="100"
         app:showAsAction="always"/>
 

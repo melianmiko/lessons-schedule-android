@@ -1,4 +1,4 @@
-package ml.mhbrgn.schooljournal;
+package ml.mhbrgn.LessonsSchedule;
 
 import android.content.Context;
 import android.util.Log;
@@ -19,7 +19,7 @@ import java.io.OutputStreamWriter;
 class DataStorage {
     private final String FILENAME = "data.json";
 
-    private Context context;
+    private final Context context;
     private JSONObject root;
 
     public String toString() {
@@ -80,7 +80,7 @@ class DataStorage {
                 }
                 if (root.isNull("times")) {
                     root.put("times", new JSONArray());
-                    LessonTime.restoreDefaults(this, context);
+                    LessonTime.restoreDefaults(this);
                 }
                 if (root.isNull("preferences")) root.put("preferences",new JSONObject());
                 if (root.isNull("table")) root.put("table",new JSONArray());
@@ -127,6 +127,25 @@ class DataStorage {
             Log.i("lessonsStorage", "Saved: "+this.toString());
         } catch (JSONException e) {
             Toast.makeText(context, "Names write failed", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+    JSONArray getTable() {
+        try {
+            return root.getJSONArray("table");
+        } catch (JSONException e) {
+            return new JSONArray();
+        }
+    }
+
+    void setTable(JSONArray table) {
+        try {
+            root.put("table",table);
+            fileWrite();
+            Log.i("TableStorage", "Table updated");
+        } catch (JSONException e) {
+            Toast.makeText(context, "Error saving table content", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }

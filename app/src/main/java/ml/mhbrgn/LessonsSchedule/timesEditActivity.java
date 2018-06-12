@@ -1,4 +1,4 @@
-package ml.mhbrgn.schooljournal;
+package ml.mhbrgn.LessonsSchedule;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
@@ -22,7 +22,7 @@ import android.widget.TextView;
 public class timesEditActivity extends AppCompatActivity {
 
     class TimesListAdapter extends RecyclerView.Adapter<TimesListAdapter.ViewHolder> {
-        private LessonTime[] mData;
+        private final LessonTime[] mData;
 
         TimesListAdapter(LessonTime[] d) {mData = d;}
 
@@ -40,13 +40,6 @@ public class timesEditActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             String startTime = mData[position].startTimeString();
             String endTime = mData[position].endTimeString();
-
-            // Add padding to last item
-            if(position == this.getItemCount()-1) {
-                RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) holder.root.getLayoutParams();
-                params.setMargins(params.leftMargin, params.topMargin, params.rightMargin, 32);
-                holder.root.setLayoutParams(params);
-            }
 
             holder.num.setText(String.valueOf(mData[position].number+1));
             holder.name.setText(startTime+"-"+endTime);
@@ -77,10 +70,10 @@ public class timesEditActivity extends AppCompatActivity {
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            View root;
-            TextView num;
-            TextView name;
-            ImageButton removeBtn;
+            final View root;
+            final TextView num;
+            final TextView name;
+            final ImageButton removeBtn;
             ViewHolder(View v) {
                 super(v);
                 root = v;
@@ -108,7 +101,7 @@ public class timesEditActivity extends AppCompatActivity {
         // Add scroll listener to hide FAB
         RecyclerView box = findViewById(R.id.times_list);
         box.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            FloatingActionButton fab = findViewById(R.id.fab);
+            final FloatingActionButton fab = findViewById(R.id.fab);
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (dy <= 0 && !fab.isShown()) fab.show();
@@ -117,7 +110,7 @@ public class timesEditActivity extends AppCompatActivity {
         });
     }
 
-    public void modTime(int id) {
+    private void modTime(int id) {
         LessonTime time = new LessonTime(this, id);
         TimeEditUI ui = new TimeEditUI(this, time);
 
@@ -132,7 +125,7 @@ public class timesEditActivity extends AppCompatActivity {
         ui.show();
     }
 
-    public void addTime() {
+    private void addTime() {
         // Get last record
         LessonTime[] data = LessonTime.getTimesArray(this);
         LessonTime newTime = new LessonTime(this, 500, 540);
@@ -169,7 +162,7 @@ public class timesEditActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.times_toolbar, menu);
+        getMenuInflater().inflate(R.menu.restore_toolbar, menu);
         return true;
     }
 

@@ -1,10 +1,11 @@
-package ml.mhbrgn.schooljournal;
+package ml.mhbrgn.LessonsSchedule;
 
 import android.content.Context;
 
 import java.util.Calendar;
+import java.util.Date;
 
-public class TableTools {
+class TableTools {
     static int getCurrentDay() {
         Calendar calendar = Calendar.getInstance();
 
@@ -13,6 +14,13 @@ public class TableTools {
 
         if ( day == 0 ) day = 7;
         return day;
+    }
+
+    static int getMinutesFromDayStart() {
+        Calendar calendar = Calendar.getInstance();
+        int h = calendar.get(Calendar.HOUR_OF_DAY);
+        int m = calendar.get(Calendar.MINUTE);
+        return h*60+m;
     }
 
     static String getDayName(int dayNumber, Context context) {

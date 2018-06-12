@@ -1,7 +1,6 @@
-package ml.mhbrgn.schooljournal;
+package ml.mhbrgn.LessonsSchedule;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 @SuppressWarnings("WeakerAccess")
 public class LessonName {
 
-    private DataStorage dataCon;
+    private final DataStorage dataCon;
     String name; int id = -1;
 
     LessonName(Context context, int id) { this(new DataStorage(context), id); }
@@ -27,7 +26,7 @@ public class LessonName {
         }
     }
 
-    LessonName(Context context, String name) {this(new DataStorage(context),name);}
+    LessonName(Context context, @SuppressWarnings("SameParameterValue") String name) {this(new DataStorage(context),name);}
     LessonName(DataStorage storage, String name) {
         this.dataCon = storage;
         this.name = name;
@@ -84,13 +83,12 @@ public class LessonName {
         restoreDefaults(new DataStorage(context),context);
     }
     static void restoreDefaults(DataStorage ds,Context context) {
-        int[] lessons = new int[]{
-                R.string.algebra, R.string.english, R.string.literature,
-                R.string.geometry, R.string.biology
-        };
+        String[] lessons = context.getResources().getStringArray(R.array.lesson_names_def);
 
-        for(int i : lessons) {
-            LessonName ln = new LessonName(ds, context.getString(i));
+        ds.setNames(new JSONArray());
+
+        for(String i : lessons) {
+            LessonName ln = new LessonName(ds,i);
             ln.write();
         }
 

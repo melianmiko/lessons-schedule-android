@@ -1,4 +1,4 @@
-package ml.mhbrgn.schooljournal;
+package ml.mhbrgn.LessonsSchedule;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -12,8 +12,8 @@ class NameEditUI {
         void onComplete(LessonName name) { }
     }
 
-    private View layout;
-    private BottomSheetDialog dialog;
+    private final View layout;
+    private final BottomSheetDialog dialog;
 
     @SuppressLint("InflateParams")
     NameEditUI(Context context, final LessonName name, final OnCompleteListener complete) {

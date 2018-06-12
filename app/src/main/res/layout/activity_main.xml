@@ -21,14 +21,14 @@
             android:contentDescription="@string/icon" />
 
         <TextView
+            android:id="@+id/note_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/notification"
             android:textSize="16sp"
             android:layout_marginStart="48dp"
             android:layout_marginTop="12dp"
-            android:layout_marginBottom="16dp"
-            android:id="@+id/note_box"/>
+            android:layout_marginBottom="16dp" />
 
     </RelativeLayout>
 

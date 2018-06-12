@@ -1,5 +1,6 @@
-package ml.mhbrgn.schooljournal;
+package ml.mhbrgn.LessonsSchedule;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,12 +9,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 class ViewTableAdapter extends RecyclerView.Adapter<ViewTableAdapter.ViewHolder> {
-    private LessonsTableItem[] mData;
+    private final LessonsTableItem[] mData;
+    int active;
 
-    ViewTableAdapter(LessonsTableItem[] data) {mData = data;}
+    ViewTableAdapter(LessonsTableItem[] data, Context context) {
+        mData = data;
+        active = LessonsStatusProvider.getCurrentLesson(context);
+    }
 
     class ViewHolder extends  RecyclerView.ViewHolder {
-        TextView nameBox; TextView numberBox; View root;
+        final TextView nameBox; final TextView numberBox; final View root;
         ViewHolder(View v) {
             super(v);
             root = v;
@@ -33,7 +38,9 @@ class ViewTableAdapter extends RecyclerView.Adapter<ViewTableAdapter.ViewHolder>
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.nameBox.setText(mData[position].lesson);
         holder.numberBox.setText(mData[position].getTime().getTablePrefix());
-        if(mData[position].lesson_id < 1) ((ViewGroup)holder.root).removeAllViews();
+
+        if(position == active && mData[position].day == TableTools.getCurrentDay()) holder.root.findViewById(R.id.active_flag).setVisibility(View.VISIBLE);
+        if(mData[position].lesson_id < 0) holder.root.setVisibility(View.INVISIBLE);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package ml.mhbrgn.schooljournal;
+package ml.mhbrgn.LessonsSchedule;
 
 import android.content.Context;
 
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 //@SuppressWarnings("WeakerAccess")
 @SuppressWarnings("WeakerAccess")
 class LessonTime {
-    private DataStorage dataCon;
+    private final DataStorage dataCon;
     int number = -1;
     int startTime;
     int endTime;
@@ -99,7 +99,7 @@ class LessonTime {
 
     // Converters
     String getTablePrefix() {
-        return number+" "+startTimeString();
+        return (number+1)+" "+startTimeString();
     }
 
     String startTimeString() {
@@ -133,8 +133,8 @@ class LessonTime {
         return sh+":"+sm;
     }
 
-    static void restoreDefaults(Context context) {restoreDefaults(new DataStorage(context),context);}
-    static void restoreDefaults(DataStorage dataCon,Context context) {
+    static void restoreDefaults(Context context) {restoreDefaults(new DataStorage(context));}
+    static void restoreDefaults(DataStorage dataCon) {
         int[][] times = new int[][]{
                 new int[]{500,540}, new int[]{545,585}, new int[]{600,640}, new int[]{655,695},
                 new int[]{705,745}, new int[]{755,795}, new int[]{805,845}, new int[]{855,895}

@@ -1,4 +1,4 @@
-package ml.mhbrgn.schooljournal;
+package ml.mhbrgn.LessonsSchedule;
 
 import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-public class TimeEditUI {
+class TimeEditUI {
     static class OnCompleteListener {
         OnCompleteListener() {
             // Noting to do
@@ -20,11 +20,11 @@ public class TimeEditUI {
         }
     }
 
-    private Context context;
+    private final Context context;
     private OnCompleteListener complete;
-    private LessonTime time;
-    private View layout;
-    private BottomSheetDialog dialog;
+    private final LessonTime time;
+    private final View layout;
+    private final BottomSheetDialog dialog;
 
     @SuppressLint("InflateParams")
     TimeEditUI(Context context, LessonTime time) {
