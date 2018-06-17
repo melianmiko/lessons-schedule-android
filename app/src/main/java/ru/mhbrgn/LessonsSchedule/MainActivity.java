@@ -1,16 +1,17 @@
-package ml.mhbrgn.LessonsSchedule;
+package ru.mhbrgn.LessonsSchedule;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.LinearLayout;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,13 +65,23 @@ public class MainActivity extends AppCompatActivity {
 
         // 2/3 - View lessons
         LessonsTableItem[] data = LessonsTable.getDay(this, current_day);
+        int active = LessonsStatusProvider.getCurrentLesson(this);
         // Create view
-        RecyclerView rv = findViewById(R.id.main_rv);
-        RecyclerView.LayoutManager lm = new LinearLayoutManager(this);
-        RecyclerView.Adapter adapter = new ViewTableAdapter(data, this);
-        // Configure
-        rv.setLayoutManager(lm);
-        rv.setAdapter(adapter);
+        LinearLayout list = findViewById(R.id.main_ll);
+        ((ViewGroup) list).removeAllViews();
+        for(LessonsTableItem i : data) {
+            if(i.lesson_id < 0) continue;
+
+            View v = LayoutInflater.from(this).inflate(R.layout.main_list_item, list, false);
+
+            ((TextView) v.findViewById(R.id.name_text)).setText(i.lesson);
+            ((TextView) v.findViewById(R.id.num_text)).setText(i.getTime().getTablePrefix());
+
+            if(i.num == active && i.day == TableTools.getCurrentDay()) 
+                v.findViewById(R.id.active_flag).setVisibility(View.VISIBLE);
+
+            list.addView(v);
+        }
 
         // 3/3 - Update status
         status.update();

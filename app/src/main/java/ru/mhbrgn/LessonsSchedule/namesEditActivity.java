@@ -1,4 +1,4 @@
-package ml.mhbrgn.LessonsSchedule;
+package ru.mhbrgn.LessonsSchedule;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -6,10 +6,10 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,73 +17,66 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class namesEditActivity extends AppCompatActivity {
-    class namesAdapter extends RecyclerView.Adapter<namesAdapter.ViewHolder> {
+    class NamesListAdapter extends ArrayAdapter<NamesListAdapter.ViewHolder> {
         final LessonName[] mData;
 
-        class ViewHolder extends RecyclerView.ViewHolder {
+        NamesListAdapter(LessonName[] data) {
+            super(namesEditActivity.this, R.layout.names_list_item);
+            mData = data;
+        }
+
+        class ViewHolder {
             final TextView name_view;
             final ImageButton remove_button;
             final View root;
             ViewHolder(View r) {
-                super(r);
                 root = r;
                 name_view = r.findViewById(R.id.text_name);
                 remove_button = r.findViewById(R.id.btn_remove);
             }
         }
 
-        namesAdapter(LessonName[] data) {
-            mData = data;
+        @Override
+        public int getCount() {
+            return mData.length;
         }
 
         @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.names_list_item, parent, false);
+        public View getView(final int position, View currentView, @NonNull final ViewGroup parent) {
+            View v = currentView;
+            if(v == null) v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.names_list_item, parent, false);
 
-            return new namesAdapter.ViewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
-            final int nameID = mData[position].id;
+            ViewHolder holder = new ViewHolder(v);
             holder.name_view.setText(mData[position].name);
 
             holder.root.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    namesEditActivity.this.nameModDialog(nameID);
+                    namesEditActivity.this.nameModDialog(position);
                 }
             });
 
             holder.remove_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    LessonName ln = new LessonName(namesEditActivity.this,nameID);
+                    LessonName ln = new LessonName(namesEditActivity.this,position);
                     ln.remove();
                     namesEditActivity.this.updateList();
                 }
             });
-        }
 
-        @Override
-        public int getItemCount() {
-            return mData.length;
+            return v;
         }
     }
 
     // ==========================================================
     private void updateList() {
-        RecyclerView rv = findViewById(R.id.names_container);
-
-        RecyclerView.Adapter adapter = new namesAdapter(LessonName.getNamesArray(this));
-        RecyclerView.LayoutManager lm= new LinearLayoutManager(this);
-
-        rv.setHasFixedSize(true);
-        rv.setLayoutManager(lm);
-        rv.setAdapter(adapter);
+        ListView lv = findViewById(R.id.names_container);
+        LessonName[] names = LessonName.getNamesArray(this);
+        ArrayAdapter ad = new NamesListAdapter(names);
+        lv.setAdapter(ad);
     }
 
     @Override
@@ -105,16 +98,6 @@ public class namesEditActivity extends AppCompatActivity {
             }
         });
 
-        // Add scroll listener to hide FAB
-        RecyclerView box = findViewById(R.id.names_container);
-        box.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            final FloatingActionButton fab = findViewById(R.id.fab);
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dy <= 0 && !fab.isShown()) fab.show();
-                else if(dy > 0 && fab.isShown()) fab.hide();
-            }
-        });
     }
 
     private void nameModDialog(int id) {

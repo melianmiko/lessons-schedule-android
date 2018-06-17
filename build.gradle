@@ -3,11 +3,13 @@
 buildscript {
     
     repositories {
+        maven {
+            url 'file:///home/mhbrgn/.gradle/m2repository'
+        }
         google()
-        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0-alpha14'
+        classpath 'com.android.tools.build:gradle:3.1.2'
         
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -17,11 +19,10 @@ buildscript {
 
 allprojects {
     repositories {
-        google()
-        jcenter()
+    maven {
+        url 'file:///home/mhbrgn/.gradle/m2repository'
+    }
+    google()
     }
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}

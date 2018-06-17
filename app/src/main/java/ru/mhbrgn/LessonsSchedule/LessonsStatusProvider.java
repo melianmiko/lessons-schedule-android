@@ -1,7 +1,8 @@
-package ml.mhbrgn.LessonsSchedule;
+package ru.mhbrgn.LessonsSchedule;
 
 import android.content.Context;
 import android.widget.TextView;
+import android.util.Log;
 
 class LessonsStatusProvider {
     TextView view;
@@ -46,10 +47,14 @@ class LessonsStatusProvider {
         int prev = findPreviousLesson(time, times);
         if(prev >= data.length) prev = -1;
 
+        int lastLesson = 0;
+        for(LessonsTableItem i : data) if(i.lesson_id >= 0) lastLesson = i.num;
+        Log.i("StatusProvider", "Last lesson number "+lastLesson+" of "+data.length+ " day "+current_day);
+
         if(data.length < 1) {
             // No lessons today
             view.setText(R.string.status_no_lessons);
-        } else if(time > data[data.length-1].getTime().endTime) {
+        } else if(time > data[lastLesson].getTime().endTime) {
             // Lessons complete
             view.setText(R.string.status_complete);
         } else if(current != -1) {

@@ -4,8 +4,6 @@
     <string name="about_author">Разработал Михаэль Берген</string>
     <string name="about_version">Предварительная версия</string>
     <string name="action_settings">Параметры</string>
-    <string name="algebra">Аглебра</string>
-    <string name="biology">Биология</string>
     <string name="cancel">Отмена</string>
     <string name="changelog">Список изменений</string>
     <string name="clean">Удалить</string>
@@ -31,17 +29,14 @@
     <string name="null_list_item">Пусто</string>
     <string name="end_time_demo">Конец урока: 09:00</string>
     <string name="end_time_ph">Конец урока: %1$s</string>
-    <string name="english">Английский язык</string>
     <string name="enter_lesson_name">Введите название урока:</string>
-    <string name="geometry">Геометрия</string>
     <string name="icon">Значок</string>
     <string name="input_lesson_name">Название урока</string>
     <string name="lessonsTitle">Расписание</string>
-    <string name="literature">Литература</string>
     <string name="logo_name">Логотип приложения</string>
     <string name="notification">Уведомление</string>
     <string name="reset_defaults">Восстановить умолчания</string>
-    <string name="restore_names_desc">Все ваши названия будут удалены и заменены уроками по умолчанию</string>
+    <string name="restore_names_desc">Все ваши названия будут удалены и заменены уроками по умолчанию</string> 
     <string name="restore_names_title">Восстановить имена по умолчанию?</string>
     <string name="section_border">Граница раздела</string>
     <string name="settingsTitle">Параметры</string>
@@ -59,4 +54,27 @@
     <string name="status_complete">Уроки закончились</string>
     <string name="status_error">Ошибка проверки статуса</string>
     <string name="status_no_lessons">Уроков сегодня нет</string>
+    <string name="current_lesson">Текущий урок</string>
+
+    <string-array name="lesson_names_def">
+        <item>Алгебра</item>
+        <item>Геометрия</item>
+        <item>Русский язык</item>
+        <item>Литература</item>
+        <item>География</item>
+        <item>Химия</item>
+        <item>Биология</item>
+        <item>Физика</item>
+        <item>Физкультура</item>
+        <item>ЛФК (Лечебная физ-ра)</item>
+        <item>Информатика</item>
+        <item>Иностранный язык</item>
+        <item>Музыка</item>
+        <item>ИЗО (Рисование)</item>
+        <item>История</item>
+        <item>Черчение</item>
+        <item>Обществознание</item>
+        <item>Труд (Технология)</item>
+    </string-array>
+
 </resources>

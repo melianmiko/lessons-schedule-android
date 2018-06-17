@@ -1,4 +1,4 @@
-package ml.mhbrgn.LessonsSchedule;
+package ru.mhbrgn.LessonsSchedule;
 
 import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;

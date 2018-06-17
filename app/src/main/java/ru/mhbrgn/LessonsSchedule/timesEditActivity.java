@@ -1,14 +1,11 @@
-package ml.mhbrgn.LessonsSchedule;
+package ru.mhbrgn.LessonsSchedule;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,28 +13,48 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 // ======================================================================
 
 public class timesEditActivity extends AppCompatActivity {
-
-    class TimesListAdapter extends RecyclerView.Adapter<TimesListAdapter.ViewHolder> {
+    class TimesAdapter extends ArrayAdapter<TimesAdapter.ViewHolder> {
         private final LessonTime[] mData;
 
-        TimesListAdapter(LessonTime[] d) {mData = d;}
+        TimesAdapter(LessonTime[] d) {
+            super(timesEditActivity.this, R.layout.times_list_item);
+            mData = d;
+        }
+
+
+        class ViewHolder {
+            final View root;
+            final TextView num;
+            final TextView name;
+            final ImageButton removeBtn;
+            ViewHolder(View v) {
+                root = v;
+                num = v.findViewById(R.id.text_number);
+                name = v.findViewById(R.id.text_name);
+                removeBtn = v.findViewById(R.id.btn_remove);
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return mData.length;
+        }
 
         @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext())
+        public View getView(final int position, View currentView, @NonNull final ViewGroup parent) {
+            View v = currentView;
+            if(v == null) v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.times_list_item, parent, false);
 
-            return new ViewHolder(v);
-        }
+            ViewHolder holder = new ViewHolder(v);
 
-        @SuppressLint("SetTextI18n")
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             String startTime = mData[position].startTimeString();
             String endTime = mData[position].endTimeString();
 
@@ -62,25 +79,8 @@ public class timesEditActivity extends AppCompatActivity {
                     timesEditActivity.this.modTime(Integer.parseInt(sid)-1);
                 }
             });
-        }
 
-        @Override
-        public int getItemCount() {
-            return mData.length;
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            final View root;
-            final TextView num;
-            final TextView name;
-            final ImageButton removeBtn;
-            ViewHolder(View v) {
-                super(v);
-                root = v;
-                num = v.findViewById(R.id.text_number);
-                name = v.findViewById(R.id.text_name);
-                removeBtn = v.findViewById(R.id.btn_remove);
-            }
+            return v;
         }
     }
 
@@ -95,17 +95,6 @@ public class timesEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 timesEditActivity.this.addTime();
-            }
-        });
-
-        // Add scroll listener to hide FAB
-        RecyclerView box = findViewById(R.id.times_list);
-        box.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            final FloatingActionButton fab = findViewById(R.id.fab);
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dy <= 0 && !fab.isShown()) fab.show();
-                else if(dy > 0 && fab.isShown()) fab.hide();
             }
         });
     }
@@ -150,13 +139,9 @@ public class timesEditActivity extends AppCompatActivity {
 
     private void updateList() {
         LessonTime[] data = LessonTime.getTimesArray(this);
-        RecyclerView box = findViewById(R.id.times_list);
-        RecyclerView.Adapter adapter = new TimesListAdapter(data);
-        RecyclerView.LayoutManager layman = new LinearLayoutManager(this);
-
-        box.setHasFixedSize(true);
-        box.setLayoutManager(layman);
-        box.setAdapter(adapter);
+        ListView lv = findViewById(R.id.times_list);
+        ArrayAdapter ad = new TimesAdapter(data);
+        lv.setAdapter(ad);
     }
 
 

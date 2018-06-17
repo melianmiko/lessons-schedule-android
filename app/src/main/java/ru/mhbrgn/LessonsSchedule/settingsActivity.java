@@ -1,4 +1,4 @@
-package ml.mhbrgn.LessonsSchedule;
+package ru.mhbrgn.LessonsSchedule;
 
 import android.content.Context;
 import android.content.Intent;

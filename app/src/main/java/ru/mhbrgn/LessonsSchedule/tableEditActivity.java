@@ -1,57 +1,63 @@
-package ml.mhbrgn.LessonsSchedule;
+package ru.mhbrgn.LessonsSchedule;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.view.MotionEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-
 public class tableEditActivity extends AppCompatActivity {
-    class DailyTableAdapter extends RecyclerView.Adapter<DailyTableAdapter.ViewHolder> {
+    class DailyTableAdapter extends ArrayAdapter<DailyTableAdapter.ViewHolder> {
         final LessonsTableItem[] mData;
 
         DailyTableAdapter(LessonsTableItem[] data) {
+            super(tableEditActivity.this, R.layout.table_edit_list_item);
             mData = data;
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder {
+        class ViewHolder {
             final View root; final TextView timeBox; final TextView nameBox;
             ViewHolder(View v) {
-                super(v);
                 root = v;
                 timeBox = v.findViewById(R.id.time_view);
                 nameBox = v.findViewById(R.id.name_view);
             }
         }
 
-        @NonNull
         @Override
-        public DailyTableAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.table_edit_list_item, parent, false);
-
-            return new ViewHolder(v);
+        public int getCount() {
+            return mData.length;
         }
 
+        @NonNull
         @Override
-        public void onBindViewHolder(@NonNull DailyTableAdapter.ViewHolder holder, int position) {
+        public View getView(final int position, View currentView, @NonNull final ViewGroup parent) {
+            View v = currentView;
+            if(v == null) v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.table_edit_list_item, parent, false);
+
+            ViewHolder holder = new ViewHolder(v);
+
             final LessonsTableItem data = mData[position];
 
             holder.timeBox.setText(data.getTime().getTablePrefix());
 
-            if(data.defined)
+            if(data.defined) {
                 holder.nameBox.setText(String.valueOf(data.lesson));
-            else {
+                holder.nameBox.setTextColor(ContextCompat.getColor(tableEditActivity.this,R.color.black));
+            } else {
                 holder.nameBox.setText(R.string.null_list_item);
                 holder.nameBox.setTextColor(ContextCompat.getColor(tableEditActivity.this,R.color.grey));
             }
@@ -60,41 +66,33 @@ public class tableEditActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
 
-                    BottomSheetDialog dialog = new BottomSheetDialog(tableEditActivity.this);
+                    AlertDialog dialog = (new AlertDialog.Builder(tableEditActivity.this)).create();
                     dialog.setCancelable(true);
 
                     LessonName[] names = LessonName.getNamesArray(tableEditActivity.this);
 
-                    RecyclerView rv = (RecyclerView) getLayoutInflater().inflate(R.layout.names_list_recycleview,
+                    ListView lv = (ListView) getLayoutInflater().inflate(R.layout.names_list_listview,
                             (ViewGroup) tableEditActivity.this.findViewById(R.id.root), false);
 
-                    RecyclerView.LayoutManager lm = new LinearLayoutManager(tableEditActivity.this);
-                    RecyclerView.Adapter adapter = new NamesListAdapter(names, dialog, data);
-
-                    rv.setLayoutManager(lm);
-                    rv.setAdapter(adapter);
-
-                    dialog.setContentView(rv);
-
+                    NamesListAdapter ad = new NamesListAdapter(names, dialog, data);
+                    lv.setAdapter(ad);
                     dialog.show();
+                    dialog.setContentView(lv);
 
                 }
             });
-        }
 
-        @Override
-        public int getItemCount() {
-            return mData.length;
+            return v;
         }
     }
-
     // ====================================================================================
-    class NamesListAdapter extends RecyclerView.Adapter<NamesListAdapter.ViewHolder> {
+    class NamesListAdapter extends ArrayAdapter<NamesListAdapter.ViewHolder> {
         final LessonName[] mData;
-        final BottomSheetDialog dialog;
+        final AlertDialog dialog;
         final LessonsTableItem callback_item;
 
-        NamesListAdapter(LessonName[] data, BottomSheetDialog dialog, LessonsTableItem item) {
+        NamesListAdapter(LessonName[] data, AlertDialog dialog, LessonsTableItem item) {
+            super(tableEditActivity.this, R.layout.names_droplist_item);
             // Build a array and add zero item
             ArrayList<LessonName> names = new ArrayList<>();
             names.add(new LessonName(tableEditActivity.this,-1,getString(R.string.clean)));
@@ -105,10 +103,9 @@ public class tableEditActivity extends AppCompatActivity {
             this.dialog = dialog;
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder {
+        class ViewHolder {
             final View root; final TextView text;
             ViewHolder(View itemView) {
-                super(itemView);
                 root = itemView;
                 text = itemView.findViewById(R.id.name_view);
             }
@@ -116,17 +113,18 @@ public class tableEditActivity extends AppCompatActivity {
 
         @NonNull
         @Override
-        public NamesListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.names_droplist_item, parent, false);
-            return new ViewHolder(v);
-        }
+        public View getView(final int position, View currentView, @NonNull final ViewGroup parent) {
+            View v = currentView;
+            if(v == null) v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.names_droplist_item, parent, false);
 
-        @Override
-        public void onBindViewHolder(@NonNull NamesListAdapter.ViewHolder holder, int position) {
+            ViewHolder holder = new ViewHolder(v);
+
             final int nameID = mData[position].id;
             holder.text.setText(mData[position].name);
             // Colorize active item
             if(callback_item.lesson_id == mData[position].id) holder.text.setTextColor(ContextCompat.getColor(tableEditActivity.this,R.color.colorAccent));
+            else holder.text.setTextColor(ContextCompat.getColor(tableEditActivity.this,R.color.black));
 
             holder.root.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -140,10 +138,12 @@ public class tableEditActivity extends AppCompatActivity {
                     tableEditActivity.this.updateList();
                 }
             });
+
+            return v;
         }
 
         @Override
-        public int getItemCount() {
+        public int getCount() {
             return mData.length;
         }
     }
@@ -185,12 +185,8 @@ public class tableEditActivity extends AppCompatActivity {
 
         // 2 - Create table
         LessonsTableItem[] data = LessonsTable.getDay(this, current_day);
-        RecyclerView.Adapter adapter = new DailyTableAdapter(data);
-        RecyclerView.LayoutManager lm = new LinearLayoutManager(this);
-
-        RecyclerView rv = findViewById(R.id.table_edit_list);
-        rv.setHasFixedSize(true);
-        rv.setLayoutManager(lm);
-        rv.setAdapter(adapter);
+        ListView lv = findViewById(R.id.table_edit_list);
+        DailyTableAdapter ad = new DailyTableAdapter(data);
+        lv.setAdapter(ad);
     }
 }

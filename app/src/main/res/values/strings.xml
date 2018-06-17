@@ -38,11 +38,6 @@
     <string name="day_6">Saturday</string>
     <string name="day_7">Sunday</string>
 
-    <string name="geometry">Geometry</string>
-    <string name="biology">Biology</string>
-    <string name="literature">Literature</string>
-    <string name="english">English</string>
-    <string name="algebra">Algebra</string>
     <string name="end_time_demo">End time: 09:00</string>
     <string name="start_time_demo">Start time: 08:20</string>
     <string name="configure_times">Configure times:</string>
