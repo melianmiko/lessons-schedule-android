@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="icon">Icon</string>
     <string name="app_name">Lessons Schedule</string>
     <!-- Title bars -->
@@ -65,8 +65,14 @@
     <string name="status_complete">All lessons complete</string>
     <string name="status_error">Status check error</string>
     <string name="current_lesson">Current lesson</string>
+    <string name="new_version">New version can de downloaded. Do it now? (New version code %1$d)</string>
+    <string name="share">Share table</string>
+    <string name="send_to">Share schedule with:</string>
+    <string name="share_info">Share a very big link to your table. You don\'t need network to import schedule.</string>
+    <string name="import_error">Import error</string>
+    <string name="import_ok">Shared schedule import complete.</string>
 
-    <string-array name="lesson_names_def">
+    <string-array name="lesson_names_def" tools:ignore="InconsistentArrays">
         <item>Algebra</item>
         <item>Geometry</item>
         <item>Language</item>

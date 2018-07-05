@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="ru.mhbrgn.LessonsSchedule">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -16,6 +18,14 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http"
+                      android:host="schedule.mhbrgn.ml"
+                      android:pathPrefix="/share/" />
             </intent-filter>
         </activity>
 
@@ -32,6 +42,7 @@
             android:label="@string/table_edit"
             android:parentActivityName=".settingsActivity"/>
 
+        <service android:name="ru.mhbrgn.tools.UpdateCheckService" />
     </application>
 
 </manifest>

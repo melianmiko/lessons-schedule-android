@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Расписание уроков</string>
     <string name="about_author">Разработал Михаэль Берген</string>
     <string name="about_version">Предварительная версия</string>
@@ -55,8 +55,14 @@
     <string name="status_error">Ошибка проверки статуса</string>
     <string name="status_no_lessons">Уроков сегодня нет</string>
     <string name="current_lesson">Текущий урок</string>
+    <string name="new_version">Доступна новая версия. Загрузить? (Номер сборки %1$d)</string>
+    <string name="share">Поделиться расписанием</string>
+    <string name="send_to">Поделиться ссылкой с помощью:</string>
+    <string name="share_info">Будет отправлена длинная ссылка на ваше расписание</string>
+    <string name="import_error">Ошибка импрта</string>
+    <string name="import_ok">Импортировано расписание</string>
 
-    <string-array name="lesson_names_def">
+    <string-array name="lesson_names_def" tools:ignore="InconsistentArrays">
         <item>Алгебра</item>
         <item>Геометрия</item>
         <item>Русский язык</item>

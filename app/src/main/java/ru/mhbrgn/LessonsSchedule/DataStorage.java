@@ -32,8 +32,6 @@ class DataStorage {
             o.write(root.toString());
             o.close();
             return true;
-        } catch (FileNotFoundException e) {
-            return false;
         } catch (IOException e) {
             return false;
         }
@@ -56,12 +54,10 @@ class DataStorage {
             root = new JSONObject(out);
             return true;
 
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | JSONException e) {
             return fileCreate();
         } catch (IOException e) {
             return false;
-        } catch (JSONException e) {
-            return fileCreate();
         }
     }
 
@@ -89,6 +85,10 @@ class DataStorage {
                 e.printStackTrace();
             }
         }
+    }
+
+    String getJSON() {
+        return root.toString();
     }
 
     // =============================================================================================
@@ -148,6 +148,11 @@ class DataStorage {
             Toast.makeText(context, "Error saving table content", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
+    }
+
+    void loadJSON(String json) throws JSONException {
+        root = new JSONObject(json);
+        fileWrite();
     }
 }
 
