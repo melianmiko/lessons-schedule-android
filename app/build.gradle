@@ -2,9 +2,6 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
-    dexOptions {
-        javaMaxHeapSize '256m'
-    }
     defaultConfig {
         applicationId "ru.mhbrgn.LessonsSchedule"
         minSdkVersion 21
